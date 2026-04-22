@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
     QHBoxLayout, QVBoxLayout, QToolButton, QTabWidget, QLabel, QComboBox,
-    QPushButton, QTableWidget, QTableWidgetItem
+    QPushButton, QTableWidget, QTableWidgetItem, QMenu
 )
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
