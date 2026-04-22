@@ -23,7 +23,7 @@ class RibbonBar(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(120)
+        self.setFixedHeight(100)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
             QPushButton {
@@ -588,8 +588,8 @@ class MainWindow(QMainWindow):
         ribbon = RibbonBar(self)
         
         # 1. Butonlar kutusu
-        btn_layout = QVBoxLayout()
-        btn_layout.setSpacing(2)
+        btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(4)
         
         for text, handler in [
             ("▶\nYeni Oyun", self.new_game),
