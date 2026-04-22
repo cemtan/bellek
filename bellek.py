@@ -23,7 +23,7 @@ class RibbonBar(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(90)
+        self.setFixedHeight(120)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
             QPushButton {
@@ -588,9 +588,9 @@ class MainWindow(QMainWindow):
         """Toolbar - Rounded boxes"""
         ribbon = RibbonBar(self)
         
-        # 1. Butonlar + Kart Adedi
-        btn_layout = QVBoxLayout()
-        btn_layout.setSpacing(2)
+        # 1. Butonlar kutusu
+        btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(4)
         
         for text, handler in [
             ("🆕 Yeni Oyun", self.new_game),
@@ -601,14 +601,15 @@ class MainWindow(QMainWindow):
             btn.clicked.connect(handler)
             btn_layout.addWidget(btn)
         
-        # Kart dropdown ekle
+        btn_box = self.create_buton_kutu(btn_layout)
+        
+        # 2. Kart Adedi
         self.grid_combo = QComboBox()
         self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
         self.grid_combo.setCurrentText(self.grid_size)
         self.grid_combo.currentTextChanged.connect(self.change_grid_size)
-        btn_layout.addWidget(self.grid_combo)
         
-        # 2. Oyuncu
+        # 3. Oyuncu
         player_layout = QHBoxLayout()
         player_layout.setSpacing(4)
         self.name_label = QLabel(self.player_name)
@@ -622,7 +623,7 @@ class MainWindow(QMainWindow):
         player_layout.addWidget(name_edit)
         player_layout.addWidget(change_btn)
         
-        # 3. Stats
+        # 4. Stats
         stats_layout = QHBoxLayout()
         stats_layout.setSpacing(8)
         
@@ -634,15 +635,24 @@ class MainWindow(QMainWindow):
         stats_layout.addWidget(self.lbl_matches)
         stats_layout.addWidget(self.lbl_time)
         
-        # Ana layout - 3 kutu yan yana
-        layout = QHBoxLayout(ribbon)
-        layout.setContentsMargins(4, 4, 4, 4)
-        layout.setSpacing(4)
+        # Ana layout - her baslik kutunun ustunde
+        layout = QGridLayout(ribbon)
+        layout.setContentsMargins(4, -4, 4, 0)
+        layout.setHorizontalSpacing(2)
+        layout.setVerticalSpacing(0)
         
-        layout.addWidget(self.create_kutu(btn_layout))
-        layout.addWidget(self.create_kutu(player_layout))
-        layout.addWidget(self.create_kutu(stats_layout))
-        layout.addStretch()
+        # Her baslik ilgili kutunun ustunde
+        layout.addWidget(QLabel("Oyun"), 0, 0)
+        layout.addWidget(self.create_kutu(btn_layout), 1, 0)
+        
+        layout.addWidget(QLabel("Kart"), 0, 1)
+        layout.addWidget(self.create_kutu(self.grid_combo), 1, 1)
+        
+        layout.addWidget(QLabel("Oyuncu"), 0, 2)
+        layout.addWidget(self.create_kutu(player_layout), 1, 2)
+        
+        layout.addWidget(QLabel("İstatistik"), 0, 3)
+        layout.addWidget(self.create_kutu(stats_layout), 1, 3)
         
         return ribbon
     
