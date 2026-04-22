@@ -534,61 +534,10 @@ class MainWindow(QMainWindow):
         # Menü çubuğu oluştur
         self.create_menu_bar()
         
-        # Skor paneli (menünün altında, açılır-kapanır)
-        self.scores_panel_widget = QWidget()
-        self.scores_panel_layout = QVBoxLayout(self.scores_panel_widget)
-        self.scores_panel_layout.setContentsMargins(4, 4, 4, 4)
-        self.scores_panel_layout.setSpacing(2)
-        
-        # Toggle button
-        self.scores_toggle_btn = QPushButton("▼ Skorlar")
-        self.scores_toggle_btn.setCheckable(True)
-        self.scores_toggle_btn.setChecked(True)
-        self.scores_toggle_btn.setStyleSheet("text-align: left; font-weight: bold;")
-        self.scores_toggle_btn.clicked.connect(self.toggle_scores_panel)
-        self.scores_panel_layout.addWidget(self.scores_toggle_btn)
-        
-        # Scores table
-        self.scores_table = QTableWidget()
-        self.scores_table.setColumnCount(4)
-        self.scores_table.setHorizontalHeaderLabels(["Sıra", "Oyuncu", "Adım", "Süre"])
-        self.scores_table.setMinimumHeight(180)
-        self.update_scores_panel()
-        self.scores_panel_layout.addWidget(self.scores_table)
-        
         # Oyun widget'ı
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
         self.game_widget.setParent(self)
-        
-        # Ana layout - menu altindaki panel + oyun
-        main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
-        main_layout.addWidget(self.scores_panel_widget)
-        main_layout.addWidget(self.game_widget)
-        
-        central_widget = QWidget()
-        central_widget.setLayout(main_layout)
-        self.setCentralWidget(central_widget)
-    
-    def toggle_scores_panel(self, checked):
-        """Skor panelini aç/kapa"""
-        if hasattr(self, 'scores_table'):
-            self.scores_table.setVisible(checked)
-        if hasattr(self, 'scores_toggle_btn'):
-            self.scores_toggle_btn.setText("▶ Skorlar" if not checked else "▼ Skorlar")
-
-    def update_scores_panel(self):
-        """Skor panelini güncelle"""
-        if not hasattr(self, 'scores_table'):
-            return
-        scores = self.score_manager.get_top_scores(self.grid_size)
-        self.scores_table.setRowCount(len(scores))
-        for i, entry in enumerate(scores):
-            self.scores_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
-            self.scores_table.setItem(i, 1, QTableWidgetItem(entry.get('name', '')))
-            self.scores_table.setItem(i, 2, QTableWidgetItem(str(entry.get('moves', 0))))
-            self.scores_table.setItem(i, 3, QTableWidgetItem(str(entry.get('duration', 0))))
+        self.setCentralWidget(self.game_widget)
     
     def create_menu_bar(self):
         """Menü çubuğu oluştur"""
