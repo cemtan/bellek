@@ -488,8 +488,8 @@ class MainWindow(QMainWindow):
         ribbon.setStyleSheet("""
             QTabWidget::pane { border: none; }
             QTabBar::tab { 
-                padding: 8px 20px; 
-                font-size: 14px;
+                padding: 6px 16px; 
+                font-size: 12px;
                 font-weight: 600;
             }
             QTabBar::tab:selected { 
@@ -497,280 +497,209 @@ class MainWindow(QMainWindow):
                 color: white;
             }
             QTabBar::tab:!selected {
-                background: #E0E0E0;
+                background: #ccc;
                 color: #333;
             }
             QLabel {
-                font-size: 11px;
-                font-weight: bold;
-                color: #333;
+                font-size: 10px;
+                font-weight: normal;
+                color: white;
             }
             QToolButton {
-                padding: 8px 16px;
-                font-size: 12px;
+                padding: 4px 8px;
+                font-size: 11px;
             }
         """)
 
-        # ===== FILE (DOSYA) TAB =====
+        # ===== FILE TAB =====
         file_tab = QWidget()
         file_layout = QHBoxLayout(file_tab)
-        file_layout.setContentsMargins(4, 4, 4, 4)
-        file_layout.setSpacing(8)
+        file_layout.setContentsMargins(2, 2, 2, 2)
+        file_layout.setSpacing(4)
         
-        # File grup - New, Open recent
-        file_group_widget = QWidget()
-        file_group_widget.setMinimumWidth(150)
-        file_group_layout = QVBoxLayout(file_group_widget)
-        file_group_layout.setContentsMargins(2, 2, 2, 2)
-        file_group_layout.setSpacing(4)
-        file_group_layout.addStretch(1)
+        # New grup
+        new_widget = QWidget()
+        new_widget.setFixedSize(90, 120)
+        new_layout = QVBoxLayout(new_widget)
+        new_layout.setContentsMargins(0, 0, 0, 0)
+        new_layout.setSpacing(2)
         
-        file_label = QLabel("DOSYA")
-        file_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        file_label.setAlignment(Qt.AlignCenter)
-        file_group_layout.addWidget(file_label)
+        new_label = QLabel("New")
+        new_layout.addWidget(new_label)
         
-        file_btn_layout = QHBoxLayout()
-        file_btn_layout.setSpacing(6)
         for icon, label, handler in [
-            ("New", "Yeni Oyun", self.new_game),
-            ("Restart", "Yeniden Baslat", self.restart_game),
+            ("+", "Yeni Oyun", self.new_game),
+            ("R", "Yeniden", self.restart_game),
         ]:
             btn = QToolButton()
             btn.setText(f"{icon} {label}")
-            btn.setMinimumHeight(32)
-            btn.setStyleSheet("padding: 6px 14px; font-size: 12px;")
-            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.setMinimumHeight(24)
             btn.clicked.connect(handler)
-            file_btn_layout.addWidget(btn)
-        file_group_layout.addLayout(file_btn_layout)
+            new_layout.addWidget(btn)
         
-        file_group_layout.addStretch(1)
-        file_layout.addWidget(file_group_widget)
+        new_layout.addStretch()
+        file_layout.addWidget(new_widget)
         
         # Save grup
-        save_group_widget = QWidget()
-        save_group_widget.setMinimumWidth(150)
-        save_group_layout = QVBoxLayout(save_group_widget)
-        save_group_layout.setContentsMargins(2, 2, 2, 2)
-        save_group_layout.setSpacing(4)
-        save_group_layout.addStretch(1)
+        save_widget = QWidget()
+        save_widget.setFixedSize(90, 120)
+        save_layout = QVBoxLayout(save_widget)
+        save_layout.setContentsMargins(0, 0, 0, 0)
+        save_layout.setSpacing(2)
         
-        save_label = QLabel("KAYIT")
-        save_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        save_label.setAlignment(Qt.AlignCenter)
-        save_group_layout.addWidget(save_label)
+        save_label = QLabel("Save")
+        save_layout.addWidget(save_label)
         
-        save_btn_layout = QHBoxLayout()
-        save_btn_layout.setSpacing(6)
-        for icon, label, handler in [
-            ("Save", "Skorlari Sifirla", self.reset_scores),
-        ]:
-            btn = QToolButton()
-            btn.setText(f"{icon} {label}")
-            btn.setMinimumHeight(32)
-            btn.setStyleSheet("padding: 6px 14px; font-size: 12px;")
-            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-            btn.clicked.connect(handler)
-            save_btn_layout.addWidget(btn)
-        save_group_layout.addLayout(save_btn_layout)
+        btn = QToolButton()
+        btn.setText("Sifirla")
+        btn.setMinimumHeight(24)
+        btn.clicked.connect(self.reset_scores)
+        save_layout.addWidget(btn)
         
-        save_group_layout.addStretch(1)
-        file_layout.addWidget(save_group_widget)
+        save_layout.addStretch()
+        file_layout.addWidget(save_widget)
         
         file_layout.addStretch(1)
         ribbon.addTab(file_tab, "File")
 
-        # ===== HOME (ANA SAYFA) TAB =====
+        # ===== HOME TAB =====
         home_tab = QWidget()
         home_layout = QHBoxLayout(home_tab)
-        home_layout.setContentsMargins(4, 4, 4, 4)
-        home_layout.setSpacing(8)
-        
-        # Clipboard grup - Copy/Paste tarzı
-        clipboard_widget = QWidget()
-        clipboard_widget.setMinimumWidth(150)
-        clipboard_group = QVBoxLayout(clipboard_widget)
-        clipboard_group.setContentsMargins(2, 2, 2, 2)
-        clipboard_group.setSpacing(4)
-        clipboard_group.addStretch(1)
-        
-        clipboard_label = QLabel("PANOM")
-        clipboard_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        clipboard_label.setAlignment(Qt.AlignCenter)
-        clipboard_group.addWidget(clipboard_label)
-        
-        clip_btn_layout = QHBoxLayout()
-        clip_btn_layout.setSpacing(6)
-        for icon, label, handler in [
-            ("Refresh", "Yeniden Baslat", self.restart_game),
-            ("Shuffle", "Karistir", self.shuffle_cards),
-        ]:
-            btn = QToolButton()
-            btn.setText(f"{icon} {label}")
-            btn.setMinimumHeight(32)
-            btn.setStyleSheet("padding: 6px 14px; font-size: 12px;")
-            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-            btn.clicked.connect(handler)
-            clip_btn_layout.addWidget(btn)
-        clipboard_group.addLayout(clip_btn_layout)
-        
-        clipboard_group.addStretch(1)
-        home_layout.addWidget(clipboard_widget)
+        home_layout.setContentsMargins(2, 2, 2, 2)
+        home_layout.setSpacing(4)
         
         # Game grup
         game_widget = QWidget()
-        game_widget.setMinimumWidth(150)
-        game_group = QVBoxLayout(game_widget)
-        game_group.setContentsMargins(2, 2, 2, 2)
-        game_group.setSpacing(4)
-        game_group.addStretch(1)
+        game_widget.setFixedSize(90, 120)
+        game_layout = QVBoxLayout(game_widget)
+        game_layout.setContentsMargins(0, 0, 0, 0)
+        game_layout.setSpacing(2)
         
-        game_label = QLabel("OYUN")
-        game_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        game_label.setAlignment(Qt.AlignCenter)
-        game_group.addWidget(game_label)
+        game_label = QLabel("Game")
+        game_layout.addWidget(game_label)
         
-        game_btn_layout = QHBoxLayout()
-        game_btn_layout.setSpacing(6)
-        
-        # Grid boyutu seçici
-        grid_label = QLabel("Kart:")
-        grid_label.setStyleSheet("color: #444; padding: 4px;")
-        game_btn_layout.addWidget(grid_label)
+        game_label2 = QLabel("Kart:")
+        game_layout.addWidget(game_label2)
         
         self.grid_combo = QComboBox()
-        self.grid_combo.setMinimumHeight(32)
-        self.grid_combo.setStyleSheet("padding: 6px 8px; min-width: 80px;")
-        self.grid_combo.addItems(["4x4 (16)", "4x6 (24)", "5x6 (30)", "4x8 (32)", "6x8 (48)"])
-        # Grid boyutunu metne çevir
-        grid_map = {'4x4 (16)': '4x4', '4x6 (24)': '4x6', '5x6 (30)': '5x6', '4x8 (32)': '4x8', '6x8 (48)': '6x8'}
-        current_text = f"{self.grid_size} ({int(self.grid_size.split('x')[0]) * int(self.grid_size.split('x')[1])})"
-        self.grid_combo.setCurrentText([k for k, v in grid_map.items() if v == self.grid_size][0])
+        self.grid_combo.setMinimumHeight(24)
+        self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
+        grid_map = {'4x4': '4x4', '4x6': '4x6', '5x6': '5x6', '4x8': '4x8', '6x8': '6x8'}
+        self.grid_combo.setCurrentText(self.grid_size)
         self.grid_combo.currentTextChanged.connect(lambda t: self.change_grid_size(grid_map.get(t, t)))
-        game_btn_layout.addWidget(self.grid_combo)
+        game_layout.addWidget(self.grid_combo)
         
-        game_group.addLayout(game_btn_layout)
-        
-        game_group.addStretch(1)
+        game_layout.addStretch()
         home_layout.addWidget(game_widget)
+        
+        # Actions grup
+        action_widget = QWidget()
+        action_widget.setFixedSize(90, 120)
+        action_layout = QVBoxLayout(action_widget)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+        action_layout.setSpacing(2)
+        
+        action_label = QLabel("Actions")
+        action_layout.addWidget(action_label)
+        
+        for label, handler in [
+            ("Yeniden", self.restart_game),
+            ("Karistir", self.shuffle_cards),
+        ]:
+            btn = QToolButton()
+            btn.setText(label)
+            btn.setMinimumHeight(24)
+            btn.clicked.connect(handler)
+            action_layout.addWidget(btn)
+        
+        action_layout.addStretch()
+        home_layout.addWidget(action_widget)
         
         home_layout.addStretch(1)
         ribbon.addTab(home_tab, "Home")
 
-        # ===== INSERT (EKLE) TAB =====
-        insert_tab = QWidget()
-        insert_layout = QHBoxLayout(insert_tab)
-        insert_layout.setContentsMargins(4, 4, 4, 4)
-        insert_layout.setSpacing(8)
+        # ===== PLAYER TAB =====
+        player_tab = QWidget()
+        player_layout = QHBoxLayout(player_tab)
+        player_layout.setContentsMargins(2, 2, 2, 2)
+        player_layout.setSpacing(4)
         
-        # Player grup
         player_widget = QWidget()
-        player_widget.setMinimumWidth(150)
-        player_group = QVBoxLayout(player_widget)
-        player_group.setContentsMargins(2, 2, 2, 2)
-        player_group.setSpacing(4)
-        player_group.addStretch(1)
+        player_widget.setFixedSize(90, 120)
+        player_layout2 = QVBoxLayout(player_widget)
+        player_layout2.setContentsMargins(0, 0, 0, 0)
+        player_layout2.setSpacing(2)
         
-        player_label = QLabel("OYUNCU")
-        player_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        player_label.setAlignment(Qt.AlignCenter)
-        player_group.addWidget(player_label)
+        player_label = QLabel("Player")
+        player_layout2.addWidget(player_label)
         
-        player_btn_layout = QHBoxLayout()
-        player_btn_layout.setSpacing(6)
+        self.player_name_label = QLabel(self.player_name)
+        player_layout2.addWidget(self.player_name_label)
         
-        name_btn = QToolButton()
-        name_btn.setText(f"Player: {self.player_name}")
-        name_btn.setMinimumHeight(32)
-        name_btn.setStyleSheet("padding: 6px 14px; font-size: 12px;")
-        name_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        name_btn.clicked.connect(self.change_name)
-        player_btn_layout.addWidget(name_btn)
+        btn = QToolButton()
+        btn.setText("Degistir")
+        btn.setMinimumHeight(24)
+        btn.clicked.connect(self.change_name)
+        player_layout2.addWidget(btn)
         
-        change_btn = QToolButton()
-        change_btn.setText("Change")
-        change_btn.setMinimumHeight(32)
-        change_btn.setStyleSheet("padding: 6px 14px; font-size: 12px;")
-        change_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        change_btn.clicked.connect(self.change_name)
-        player_btn_layout.addWidget(change_btn)
+        player_layout2.addStretch()
+        player_layout.addWidget(player_widget)
         
-        player_group.addLayout(player_btn_layout)
-        
-        player_group.addStretch(1)
-        insert_layout.addWidget(player_widget)
-        
-        insert_layout.addStretch(1)
-        ribbon.addTab(insert_tab, "Player")
+        player_layout.addStretch(1)
+        ribbon.addTab(player_tab, "Player")
 
-        # ===== HELP (YARDIM) TAB =====
+        # ===== HELP TAB =====
         help_tab = QWidget()
         help_layout = QHBoxLayout(help_tab)
-        help_layout.setContentsMargins(4, 4, 4, 4)
-        help_layout.setSpacing(8)
+        help_layout.setContentsMargins(2, 2, 2, 2)
+        help_layout.setSpacing(4)
         
         # Help grup
         help_widget = QWidget()
-        help_widget.setMinimumWidth(150)
-        help_group = QVBoxLayout(help_widget)
-        help_group.setContentsMargins(2, 2, 2, 2)
-        help_group.setSpacing(4)
-        help_group.addStretch(1)
+        help_widget.setFixedSize(90, 120)
+        help_layout2 = QVBoxLayout(help_widget)
+        help_layout2.setContentsMargins(0, 0, 0, 0)
+        help_layout2.setSpacing(2)
         
-        help_label = QLabel("YARDIM")
-        help_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        help_label.setAlignment(Qt.AlignCenter)
-        help_group.addWidget(help_label)
+        help_label = QLabel("Help")
+        help_layout2.addWidget(help_label)
         
-        help_btn_layout = QHBoxLayout()
-        help_btn_layout.setSpacing(6)
-        for icon, label, handler in [
-            ("Help", "Yardim", self.show_help),
-            ("About", "Hakkinda", self.show_about),
+        for label, handler in [
+            ("Yardim", self.show_help),
+            ("Hakkinda", self.show_about),
         ]:
             btn = QToolButton()
-            btn.setText(f"{icon} {label}")
-            btn.setMinimumHeight(32)
-            btn.setStyleSheet("padding: 6px 14px; font-size: 12px;")
-            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.setText(label)
+            btn.setMinimumHeight(24)
             btn.clicked.connect(handler)
-            help_btn_layout.addWidget(btn)
-        help_group.addLayout(help_btn_layout)
+            help_layout2.addWidget(btn)
         
-        help_group.addStretch(1)
+        help_layout2.addStretch()
         help_layout.addWidget(help_widget)
         
-        # Bilgi grup
+        # Info grup
         info_widget = QWidget()
-        info_widget.setMinimumWidth(150)
-        comment_group = QVBoxLayout(info_widget)
-        comment_group.setContentsMargins(2, 2, 2, 2)
-        comment_group.setSpacing(4)
-        comment_group.addStretch(1)
+        info_widget.setFixedSize(90, 120)
+        info_layout = QVBoxLayout(info_widget)
+        info_layout.setContentsMargins(0, 0, 0, 0)
+        info_layout.setSpacing(2)
         
-        comment_label = QLabel("BILGI")
-        comment_label.setStyleSheet("font-weight: bold; color: white; background: #4472C4; padding: 6px 16px; font-size: 13px;")
-        comment_label.setAlignment(Qt.AlignCenter)
-        comment_group.addWidget(comment_label)
+        info_label = QLabel("Info")
+        info_layout.addWidget(info_label)
         
-        self.info_avatar_name = QLabel(f"Player: {self.player_name}")
-        self.info_avatar_name.setStyleSheet("padding: 8px; font-size: 12px;")
-        comment_group.addWidget(self.info_avatar_name)
+        self.info_avatar_name = QLabel(self.player_name)
+        info_layout.addWidget(self.info_avatar_name)
         
-        self.info_moves = QLabel("Adimlar: 0")
-        self.info_moves.setStyleSheet("padding: 8px; font-size: 12px;")
-        comment_group.addWidget(self.info_moves)
+        self.info_moves = QLabel("Adim: 0")
+        info_layout.addWidget(self.info_moves)
         
-        self.info_matches = QLabel("Eslesme: 0/0")
-        self.info_matches.setStyleSheet("padding: 8px; font-size: 12px;")
-        comment_group.addWidget(self.info_matches)
+        self.info_matches = QLabel("Esle: 0/0")
+        info_layout.addWidget(self.info_matches)
         
-        self.info_time = QLabel("Sure: 00:00")
-        self.info_time.setStyleSheet("padding: 8px; font-size: 12px;")
-        comment_group.addWidget(self.info_time)
+        self.info_time = QLabel("Sure: 0")
+        info_layout.addWidget(self.info_time)
         
-        comment_group.addStretch(1)
+        info_layout.addStretch()
         help_layout.addWidget(info_widget)
         
         help_layout.addStretch(1)
