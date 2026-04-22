@@ -23,7 +23,7 @@ class RibbonBar(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(120)
+        self.setFixedHeight(140)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
             QPushButton {
@@ -601,16 +601,15 @@ class MainWindow(QMainWindow):
             btn.clicked.connect(handler)
             btn_layout.addWidget(btn)
         
-        btn_box = self.create_box("Oyun", btn_layout)
+        btn_box = self.create_buton_kutu(btn_layout)
         
-        # 2. Kart Adedi dropdown
+        # 2. Kart Adedi
         self.grid_combo = QComboBox()
         self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
         self.grid_combo.setCurrentText(self.grid_size)
         self.grid_combo.currentTextChanged.connect(self.change_grid_size)
-        grid_box = self.create_box("Kart Adedi", self.grid_combo)
         
-        # 3. Oyuncu kutusu
+        # 3. Oyuncu
         player_layout = QHBoxLayout()
         player_layout.setSpacing(4)
         self.name_label = QLabel(self.player_name)
@@ -623,9 +622,8 @@ class MainWindow(QMainWindow):
         player_layout.addWidget(self.name_label)
         player_layout.addWidget(name_edit)
         player_layout.addWidget(change_btn)
-        player_box = self.create_box("Oyuncu", player_layout)
         
-        # 4. Stats kutusu
+        # 4. Stats
         stats_layout = QHBoxLayout()
         stats_layout.setSpacing(8)
         
@@ -637,22 +635,45 @@ class MainWindow(QMainWindow):
         stats_layout.addWidget(self.lbl_matches)
         stats_layout.addWidget(self.lbl_time)
         
-        stats_box = self.create_box("İstatistik", stats_layout)
+        # Ana layout - kutular disinda basliklar
+        layout = QVBoxLayout(ribbon)
+        layout.setContentsMargins(8, 4, 8, 4)
+        layout.setSpacing(4)
         
-        # Ana layout
-        layout = QHBoxLayout(ribbon)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(8)
-        layout.addWidget(btn_box)
-        layout.addWidget(grid_box)
-        layout.addWidget(player_box)
-        layout.addWidget(stats_box)
-        layout.addStretch()
+        # Ust satir: basliklar (mavi kalin)
+        header_layout = QHBoxLayout()
+        header_layout.setSpacing(8)
+        for title in ["Oyun", "Kart Adedi", "Oyuncu", "İstatistik"]:
+            lbl = QLabel(title)
+            lbl.setStyleSheet("font-weight: bold; color: #4472C4;")
+            header_layout.addWidget(lbl)
+        header_layout.addStretch()
+        
+        # Alt satir: kutular
+        row_layout = QHBoxLayout()
+        row_layout.setSpacing(8)
+        
+        btn_box2 = self.create_kutu(btn_layout)
+        row_layout.addWidget(btn_box2)
+        
+        grid_box = self.create_kutu(self.grid_combo)
+        row_layout.addWidget(grid_box)
+        
+        player_box = self.create_kutu(player_layout)
+        row_layout.addWidget(player_box)
+        
+        stats_box = self.create_kutu(stats_layout)
+        row_layout.addWidget(stats_box)
+        
+        row_layout.addStretch()
+        
+        layout.addLayout(header_layout)
+        layout.addLayout(row_layout)
         
         return ribbon
     
-    def create_box(self, title, content_layout):
-        """Kenarları yuvarlatılmış kutu"""
+    def create_kutu(self, widget):
+        """Kenarı yuvarlatılmış kutu"""
         box = QFrame()
         box.setStyleSheet("""
             QFrame {
@@ -660,24 +681,28 @@ class MainWindow(QMainWindow):
                 border: 1px solid #cccccc;
                 border-radius: 8px;
             }
-            QLabel {
-                font-weight: bold;
-                color: #4472C4;
+        """)
+        if widget:
+            v_layout = QVBoxLayout(box)
+            v_layout.setContentsMargins(8, 4, 8, 4)
+            v_layout.addWidget(widget)
+        return box
+    
+    def create_buton_kutu(self, layout):
+        """Butonlar için kutu"""
+        box = QFrame()
+        box.setStyleSheet("""
+            QFrame {
+                background: white;
+                border: 1px solid #cccccc;
+                border-radius: 8px;
             }
         """)
         v_layout = QVBoxLayout(box)
         v_layout.setContentsMargins(8, 4, 8, 4)
-        if title:
-            label = QLabel(title)
-            v_layout.addWidget(label)
-        if content_layout:
-            # Check if it's a widget or a layout
-            if isinstance(content_layout, QWidget):
-                v_layout.addWidget(content_layout)
-            else:
-                content = QWidget()
-                content.setLayout(content_layout)
-                v_layout.addWidget(content)
+        content = QWidget()
+        content.setLayout(layout)
+        v_layout.addWidget(content)
         return box
     
     def update_stats(self):
