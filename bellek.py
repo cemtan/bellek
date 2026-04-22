@@ -23,7 +23,7 @@ class RibbonBar(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(160)
+        self.setFixedHeight(120)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
             QPushButton {
@@ -639,7 +639,7 @@ class MainWindow(QMainWindow):
         layout = QGridLayout(ribbon)
         layout.setContentsMargins(8, 4, 8, 4)
         layout.setHorizontalSpacing(4)
-        layout.setVerticalSpacing(2)
+        layout.setVerticalSpacing(0)
         
         # Her baslik ilgili kutunun ustunde
         layout.addWidget(QLabel("Oyun"), 0, 0)
