@@ -643,44 +643,8 @@ class MainWindow(QMainWindow):
         
         layout2.addStretch()
         
-        # === SCORES TAB ===
-        tab3, layout3 = ribbon.addRibbonTab("Skorlar")
-        
-        self.scores_toggle_btn = QPushButton("▶ Skorlar")
-        self.scores_toggle_btn.setCheckable(True)
-        self.scores_toggle_btn.setChecked(True)
-        self.scores_toggle_btn.clicked.connect(self.toggle_scores)
-        self.scores_toggle_btn.setStyleSheet("font-weight: bold; text-align: left;")
-        layout3.addWidget(self.scores_toggle_btn)
-        
-        self.scores_table = QTableWidget()
-        self.scores_table.setColumnCount(4)
-        self.scores_table.setHorizontalHeaderLabels(["Sıra", "Oyuncu", "Adım", "Süre"])
-        self.scores_table.setMinimumHeight(150)
-        self.update_scores_table()
-        layout3.addWidget(self.scores_table)
-        
-        layout3.addStretch()
-        
         return ribbon
     
-    def toggle_scores(self, checked):
-        if hasattr(self, 'scores_table'):
-            self.scores_table.setVisible(checked)
-        if hasattr(self, 'scores_toggle_btn'):
-            self.scores_toggle_btn.setText("▶ Skorlar" if not checked else "▼ Skorlar")
-    
-    def update_scores_table(self):
-        if not hasattr(self, 'scores_table'):
-            return
-        scores = self.score_manager.get_top_scores(self.grid_size)
-        self.scores_table.setRowCount(len(scores))
-        for i, entry in enumerate(scores):
-            self.scores_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
-            self.scores_table.setItem(i, 1, QTableWidgetItem(entry.get('name', '')))
-            self.scores_table.setItem(i, 2, QTableWidgetItem(str(entry.get('moves', 0))))
-            self.scores_table.setItem(i, 3, QTableWidgetItem(str(entry.get('duration', 0))))
-
     def new_game(self):
         """Yeni oyun"""
         name, ok = QInputDialog.getText(self, "🆕 Yeni Oyun", "Oyuncu adı:", text=self.player_name)
