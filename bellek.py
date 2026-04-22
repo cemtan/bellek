@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
-    QHBoxLayout, QVBoxLayout, QToolButton, QTabWidget, QLabel, QComboBox,
+    QHBoxLayout, QVBoxLayout, QGridLayout, QToolButton, QTabWidget, QLabel, QComboBox,
     QPushButton, QTableWidget, QTableWidgetItem, QMenu, QLineEdit, QFrame, QLayout
 )
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
@@ -23,7 +23,7 @@ class RibbonBar(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(140)
+        self.setFixedHeight(160)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
             QPushButton {
@@ -635,40 +635,23 @@ class MainWindow(QMainWindow):
         stats_layout.addWidget(self.lbl_matches)
         stats_layout.addWidget(self.lbl_time)
         
-        # Ana layout - kutular disinda basliklar
-        layout = QVBoxLayout(ribbon)
+        # Ana layout - her baslik kutunun ustunde
+        layout = QGridLayout(ribbon)
         layout.setContentsMargins(8, 4, 8, 4)
-        layout.setSpacing(4)
+        layout.setSpacing(4, 8)
         
-        # Ust satir: basliklar (mavi kalin)
-        header_layout = QHBoxLayout()
-        header_layout.setSpacing(8)
-        for title in ["Oyun", "Kart Adedi", "Oyuncu", "İstatistik"]:
-            lbl = QLabel(title)
-            lbl.setStyleSheet("font-weight: bold; color: #4472C4;")
-            header_layout.addWidget(lbl)
-        header_layout.addStretch()
+        # Her baslik ilgili kutunun ustunde
+        layout.addWidget(QLabel("Oyun"), 0, 0)
+        layout.addWidget(self.create_kutu(btn_layout), 1, 0)
         
-        # Alt satir: kutular
-        row_layout = QHBoxLayout()
-        row_layout.setSpacing(8)
+        layout.addWidget(QLabel("Kart Adedi"), 0, 1)
+        layout.addWidget(self.create_kutu(self.grid_combo), 1, 1)
         
-        btn_box2 = self.create_kutu(btn_layout)
-        row_layout.addWidget(btn_box2)
+        layout.addWidget(QLabel("Oyuncu"), 0, 2)
+        layout.addWidget(self.create_kutu(player_layout), 1, 2)
         
-        grid_box = self.create_kutu(self.grid_combo)
-        row_layout.addWidget(grid_box)
-        
-        player_box = self.create_kutu(player_layout)
-        row_layout.addWidget(player_box)
-        
-        stats_box = self.create_kutu(stats_layout)
-        row_layout.addWidget(stats_box)
-        
-        row_layout.addStretch()
-        
-        layout.addLayout(header_layout)
-        layout.addLayout(row_layout)
+        layout.addWidget(QLabel("İstatistik"), 0, 3)
+        layout.addWidget(self.create_kutu(stats_layout), 1, 3)
         
         return ribbon
     
