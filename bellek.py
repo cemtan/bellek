@@ -482,54 +482,237 @@ class MainWindow(QMainWindow):
             self.addAction(shortcut_action)
 
     def create_ribbon(self):
+        """OnlyOffice tarzı ribbon menu"""
         ribbon = QTabWidget(self)
+        ribbon.setDocumentMode(True)
+        ribbon.setStyleSheet("""
+            QTabWidget::pane { border: none; }
+            QTabBar::tab { 
+                padding: 8px 16px; 
+                font-size: 13px;
+                font-weight: 500;
+            }
+            QTabBar::tab:selected { 
+                background: #4472C4;
+                color: white;
+            }
+            QTabBar::tab:!selected {
+                background: #F3F3F3;
+                color: #444;
+            }
+        """)
 
-        info_tab = QWidget()
-        info_layout = QHBoxLayout(info_tab)
-        info_layout.setContentsMargins(8, 6, 8, 6)
-        info_layout.setSpacing(18)
-        self.info_avatar_name = QLabel("👤 Oyuncu")
-        self.info_moves = QLabel("Adımlar: 0")
-        self.info_matches = QLabel("Eşleştirmeler: 0/0")
-        self.info_time = QLabel("Süre: 00:00")
-        info_layout.addWidget(self.info_avatar_name)
-        info_layout.addWidget(self.info_moves)
-        info_layout.addWidget(self.info_matches)
-        info_layout.addWidget(self.info_time)
-        info_layout.addStretch(1)
-        ribbon.addTab(info_tab, "Bilgi")
-
-        game_tab = QWidget()
-        game_layout = QHBoxLayout(game_tab)
-        game_layout.setContentsMargins(8, 6, 8, 6)
-        game_layout.setSpacing(8)
-        for label, handler in [
-            ("Yeni Oyun", self.new_game),
-            ("Yeniden Başlat", self.restart_game),
-            ("Skorları Sıfırla", self.reset_scores),
+        # ===== FILE (DOSYA) TAB =====
+        file_tab = QWidget()
+        file_layout = QHBoxLayout(file_tab)
+        file_layout.setContentsMargins(4, 4, 4, 4)
+        file_layout.setSpacing(4)
+        
+        # File grup - New, Open recent
+        file_group_layout = QVBoxLayout()
+        file_group_layout.setSpacing(2)
+        file_label = QLabel("Dosya")
+        file_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        file_group_layout.addWidget(file_label)
+        
+        file_btn_layout = QHBoxLayout()
+        file_btn_layout.setSpacing(4)
+        for icon, label, handler in [
+            ("📄", "Yeni Oyun", self.new_game),
+            ("📂", "Yeniden Başlat", self.restart_game),
         ]:
             btn = QToolButton()
-            btn.setText(label)
+            btn.setText(f"{icon} {label}")
+            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             btn.clicked.connect(handler)
-            game_layout.addWidget(btn)
-        self.grid_combo = QComboBox()
-        self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
-        self.grid_combo.setCurrentText(self.grid_size)
-        self.grid_combo.currentTextChanged.connect(self.change_grid_size)
-        game_layout.addWidget(QLabel("Kart Adedi:"))
-        game_layout.addWidget(self.grid_combo)
-        game_layout.addStretch(1)
-        ribbon.addTab(game_tab, "Oyun")
+            file_btn_layout.addWidget(btn)
+        file_group_layout.addLayout(file_btn_layout)
+        file_layout.addLayout(file_group_layout)
+        
+        file_layout.addSpacing(20)
+        
+        # Save grup
+        save_group_layout = QVBoxLayout()
+        save_group_layout.setSpacing(2)
+        save_label = QLabel("Kayıt")
+        save_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        save_group_layout.addWidget(save_label)
+        
+        save_btn_layout = QHBoxLayout()
+        save_btn_layout.setSpacing(4)
+        for icon, label, handler in [
+            ("💾", "Skorları Sıfırla", self.reset_scores),
+        ]:
+            btn = QToolButton()
+            btn.setText(f"{icon} {label}")
+            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.clicked.connect(handler)
+            save_btn_layout.addWidget(btn)
+        save_group_layout.addLayout(save_btn_layout)
+        save_group_layout.addStretch(1)
+        file_layout.addLayout(save_group_layout)
+        
+        file_layout.addStretch(1)
+        ribbon.addTab(file_tab, "📁 Dosya")
 
+        # ===== HOME (ANA SAYFA) TAB =====
+        home_tab = QWidget()
+        home_layout = QHBoxLayout(home_tab)
+        home_layout.setContentsMargins(4, 4, 4, 4)
+        home_layout.setSpacing(8)
+        
+        # Clipboard grup - Copy/Paste tarzı
+        clipboard_group = QVBoxLayout()
+        clipboard_group.setSpacing(2)
+        clipboard_label = QLabel("Panom")
+        clipboard_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        clipboard_group.addWidget(clipboard_label)
+        
+        clip_btn_layout = QHBoxLayout()
+        clip_btn_layout.setSpacing(4)
+        for icon, label, handler in [
+            ("🔄", "Yeniden Başlat", self.restart_game),
+            ("🎲", "Karıştır", self.shuffle_cards),
+        ]:
+            btn = QToolButton()
+            btn.setText(f"{icon} {label}")
+            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.clicked.connect(handler)
+            clip_btn_layout.addWidget(btn)
+        clipboard_group.addLayout(clip_btn_layout)
+        home_layout.addLayout(clipboard_group)
+        
+        home_layout.addSpacing(20)
+        
+        # Game grup
+        game_group = QVBoxLayout()
+        game_group.setSpacing(2)
+        game_label = QLabel("Oyun")
+        game_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        game_group.addWidget(game_label)
+        
+        game_btn_layout = QHBoxLayout()
+        game_btn_layout.setSpacing(4)
+        
+        # Grid boyutu seçici
+        grid_label = QLabel("Kart:")
+        grid_label.setStyleSheet("color: #444;")
+        game_btn_layout.addWidget(grid_label)
+        
+        self.grid_combo = QComboBox()
+        self.grid_combo.setStyleSheet("""
+            QComboBox { 
+                padding: 4px 8px;
+                min-width: 60px;
+            }
+        """)
+        self.grid_combo.addItems(["4x4 (16)", "4x6 (24)", "5x6 (30)", "4x8 (32)", "6x8 (48)"])
+        # Grid boyutunu metne çevir
+        grid_map = {'4x4 (16)': '4x4', '4x6 (24)': '4x6', '5x6 (30)': '5x6', '4x8 (32)': '4x8', '6x8 (48)': '6x8'}
+        current_text = f"{self.grid_size} ({int(self.grid_size.split('x')[0]) * int(self.grid_size.split('x')[1])})"
+        self.grid_combo.setCurrentText([k for k, v in grid_map.items() if v == self.grid_size][0])
+        self.grid_combo.currentTextChanged.connect(lambda t: self.change_grid_size(grid_map.get(t, t)))
+        game_btn_layout.addWidget(self.grid_combo)
+        
+        game_group.addLayout(game_btn_layout)
+        home_layout.addLayout(game_group)
+        
+        home_layout.addStretch(1)
+        ribbon.addTab(home_tab, "🏠 Ana Sayfa")
+
+        # ===== INSERT (EKLE) TAB =====
+        insert_tab = QWidget()
+        insert_layout = QHBoxLayout(insert_tab)
+        insert_layout.setContentsMargins(4, 4, 4, 4)
+        insert_layout.setSpacing(8)
+        
+        # Player grup
+        player_group = QVBoxLayout()
+        player_group.setSpacing(2)
+        player_label = QLabel("Oyuncu")
+        player_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        player_group.addWidget(player_label)
+        
+        player_btn_layout = QHBoxLayout()
+        player_btn_layout.setSpacing(4)
+        
+        name_btn = QToolButton()
+        name_btn.setText(f"👤 {self.player_name}")
+        name_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        name_btn.clicked.connect(self.change_name)
+        player_btn_layout.addWidget(name_btn)
+        
+        change_btn = QToolButton()
+        change_btn.setText("✏️ Değiştir")
+        change_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        change_btn.clicked.connect(self.change_name)
+        player_btn_layout.addWidget(change_btn)
+        
+        player_group.addLayout(player_btn_layout)
+        insert_layout.addLayout(player_group)
+        
+        insert_layout.addStretch(1)
+        ribbon.addTab(insert_tab, "👤 Oyuncu")
+
+        # ===== HELP (YARDIM) TAB =====
         help_tab = QWidget()
         help_layout = QHBoxLayout(help_tab)
-        help_layout.setContentsMargins(8, 6, 8, 6)
-        help_btn = QToolButton()
-        help_btn.setText("Yardım")
-        help_btn.clicked.connect(self.show_help)
-        help_layout.addWidget(help_btn)
+        help_layout.setContentsMargins(4, 4, 4, 4)
+        help_layout.setSpacing(8)
+        
+        # Help grup
+        help_group = QVBoxLayout()
+        help_group.setSpacing(2)
+        help_label = QLabel("Yardım")
+        help_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        help_group.addWidget(help_label)
+        
+        help_btn_layout = QHBoxLayout()
+        help_btn_layout.setSpacing(4)
+        for icon, label, handler in [
+            ("❓", "Yardım", self.show_help),
+            ("ℹ️", "Hakkında", self.show_about),
+        ]:
+            btn = QToolButton()
+            btn.setText(f"{icon} {label}")
+            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.clicked.connect(handler)
+            help_btn_layout.addWidget(btn)
+        help_group.addLayout(help_btn_layout)
+        help_group.addStretch(1)
+        help_layout.addLayout(help_group)
+        
+        # Comments tarzı - sol tarafta her zaman
+        help_layout.addSpacing(20)
+        
+        comment_group = QVBoxLayout()
+        comment_group.setSpacing(2)
+        comment_label = QLabel("Bilgi")
+        comment_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        comment_group.addWidget(comment_label)
+        
+        self.info_avatar_name = QLabel(f"👤 {self.player_name}")
+        self.info_avatar_name.setStyleSheet("font-size: 12px;")
+        comment_group.addWidget(self.info_avatar_name)
+        
+        self.info_moves = QLabel("Adımlar: 0")
+        self.info_moves.setStyleSheet("font-size: 12px;")
+        comment_group.addWidget(self.info_moves)
+        
+        self.info_matches = QLabel("Eşleştirme: 0/0")
+        self.info_matches.setStyleSheet("font-size: 12px;")
+        comment_group.addWidget(self.info_matches)
+        
+        self.info_time = QLabel("Süre: 00:00")
+        self.info_time.setStyleSheet("font-size: 12px;")
+        comment_group.addWidget(self.info_time)
+        
+        comment_group.addStretch(1)
+        help_layout.addLayout(comment_group)
+        
         help_layout.addStretch(1)
-        ribbon.addTab(help_tab, "Yardım")
+        ribbon.addTab(help_tab, "❓ Yardım")
+        
         return ribbon
 
     def position_info_ribbon(self):
@@ -551,10 +734,10 @@ class MainWindow(QMainWindow):
         if not hasattr(self, "game_widget"):
             return
         gw = self.game_widget
-        if hasattr(self, "info_avatar_name"):
+        if hasattr(self, "info_avatar_name") and self.info_avatar_name:
             self.info_avatar_name.setText(f"👤 {self.player_name}")
             self.info_moves.setText(f"Adımlar: {gw.moves}")
-            self.info_matches.setText(f"Eşleştirmeler: {gw.matched_pairs}/{gw.total_pairs}")
+            self.info_matches.setText(f"Eşleştirme: {gw.matched_pairs}/{gw.total_pairs}")
             self.info_time.setText(f"Süre: {gw.format_time()}")
 
     def resizeEvent(self, event):
@@ -615,6 +798,31 @@ Nasıl Oynanır:
 Platform: Linux KDE uyumlu"""
 
         QMessageBox.information(self, "Yardım", help_text)
+
+    def show_about(self):
+        """Hakkında göster"""
+        QMessageBox.about(self, "ℹ️ Bellek Oyunu Hakkında",
+            "🧠 Bellek Oyunu v2.0\n\n"
+            "Kart eşleştirme oyunu\n\n"
+            "© 2024 Bellek Oyunu\n"
+            "Tüm hakları saklıdır.")
+
+    def shuffle_cards(self):
+        """Kartları karıştır"""
+        if self.game_widget:
+            self.game_widget.initialize_cards()
+            self.game_widget.first_flipped = -1
+            self.game_widget.second_flipped = -1
+            self.game_widget.moves = 0
+            self.game_widget.matched_pairs = 0
+            self.game_widget.elapsed_seconds = 0
+            self.game_widget.game_active = True
+            self.game_widget.game_finished = False
+            if not self.game_widget.timer_running:
+                self.game_widget.game_timer.start()
+                self.game_widget.timer_running = True
+            self.refresh_info_tab()
+            self.game_widget.update()
     
     def change_grid_size(self, grid_size):
         """Grid boyutunu değiştir"""
