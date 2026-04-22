@@ -685,7 +685,13 @@ class MainWindow(QMainWindow):
         if widget:
             v_layout = QVBoxLayout(box)
             v_layout.setContentsMargins(8, 4, 8, 4)
-            v_layout.addWidget(widget)
+            # Handle both widgets and layouts
+            if isinstance(widget, QLayout):
+                content = QWidget()
+                content.setLayout(widget)
+                v_layout.addWidget(content)
+            else:
+                v_layout.addWidget(widget)
         return box
     
     def create_buton_kutu(self, layout):
