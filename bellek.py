@@ -515,17 +515,14 @@ class MainWindow(QMainWindow):
         file_tab = QWidget()
         file_layout = QHBoxLayout(file_tab)
         file_layout.setContentsMargins(2, 2, 2, 2)
-        file_layout.setSpacing(4)
+        file_layout.setSpacing(6)
         
-        # New grup
+        # New grup - basliksiz kutu
         new_widget = QWidget()
-        new_widget.setFixedSize(90, 120)
+        new_widget.setStyleSheet("border: 1px solid #999;")
         new_layout = QVBoxLayout(new_widget)
-        new_layout.setContentsMargins(0, 0, 0, 0)
+        new_layout.setContentsMargins(2, 2, 2, 2)
         new_layout.setSpacing(2)
-        
-        new_label = QLabel("New")
-        new_layout.addWidget(new_label)
         
         for icon, label, handler in [
             ("+", "Yeni Oyun", self.new_game),
@@ -538,17 +535,14 @@ class MainWindow(QMainWindow):
             new_layout.addWidget(btn)
         
         new_layout.addStretch()
-        file_layout.addWidget(new_widget)
+        file_layout.addWidget(new_widget, 1)
         
         # Save grup
         save_widget = QWidget()
-        save_widget.setFixedSize(90, 120)
+        save_widget.setStyleSheet("border: 1px solid #999;")
         save_layout = QVBoxLayout(save_widget)
-        save_layout.setContentsMargins(0, 0, 0, 0)
+        save_layout.setContentsMargins(2, 2, 2, 2)
         save_layout.setSpacing(2)
-        
-        save_label = QLabel("Save")
-        save_layout.addWidget(save_label)
         
         btn = QToolButton()
         btn.setText("Sifirla")
@@ -557,7 +551,7 @@ class MainWindow(QMainWindow):
         save_layout.addWidget(btn)
         
         save_layout.addStretch()
-        file_layout.addWidget(save_widget)
+        file_layout.addWidget(save_widget, 1)
         
         file_layout.addStretch(1)
         ribbon.addTab(file_tab, "File")
@@ -566,17 +560,14 @@ class MainWindow(QMainWindow):
         home_tab = QWidget()
         home_layout = QHBoxLayout(home_tab)
         home_layout.setContentsMargins(2, 2, 2, 2)
-        home_layout.setSpacing(4)
+        home_layout.setSpacing(6)
         
         # Game grup
         game_widget = QWidget()
-        game_widget.setFixedSize(90, 120)
+        game_widget.setStyleSheet("border: 1px solid #999;")
         game_layout = QVBoxLayout(game_widget)
-        game_layout.setContentsMargins(0, 0, 0, 0)
+        game_layout.setContentsMargins(2, 2, 2, 2)
         game_layout.setSpacing(2)
-        
-        game_label = QLabel("Game")
-        game_layout.addWidget(game_label)
         
         game_label2 = QLabel("Kart:")
         game_layout.addWidget(game_label2)
@@ -590,17 +581,14 @@ class MainWindow(QMainWindow):
         game_layout.addWidget(self.grid_combo)
         
         game_layout.addStretch()
-        home_layout.addWidget(game_widget)
+        home_layout.addWidget(game_widget, 1)
         
         # Actions grup
         action_widget = QWidget()
-        action_widget.setFixedSize(90, 120)
+        action_widget.setStyleSheet("border: 1px solid #999;")
         action_layout = QVBoxLayout(action_widget)
-        action_layout.setContentsMargins(0, 0, 0, 0)
+        action_layout.setContentsMargins(2, 2, 2, 2)
         action_layout.setSpacing(2)
-        
-        action_label = QLabel("Actions")
-        action_layout.addWidget(action_label)
         
         for label, handler in [
             ("Yeniden", self.restart_game),
@@ -613,7 +601,7 @@ class MainWindow(QMainWindow):
             action_layout.addWidget(btn)
         
         action_layout.addStretch()
-        home_layout.addWidget(action_widget)
+        home_layout.addWidget(action_widget, 1)
         
         home_layout.addStretch(1)
         ribbon.addTab(home_tab, "Home")
@@ -622,16 +610,13 @@ class MainWindow(QMainWindow):
         player_tab = QWidget()
         player_layout = QHBoxLayout(player_tab)
         player_layout.setContentsMargins(2, 2, 2, 2)
-        player_layout.setSpacing(4)
+        player_layout.setSpacing(6)
         
         player_widget = QWidget()
-        player_widget.setFixedSize(90, 120)
+        player_widget.setStyleSheet("border: 1px solid #999;")
         player_layout2 = QVBoxLayout(player_widget)
-        player_layout2.setContentsMargins(0, 0, 0, 0)
+        player_layout2.setContentsMargins(2, 2, 2, 2)
         player_layout2.setSpacing(2)
-        
-        player_label = QLabel("Player")
-        player_layout2.addWidget(player_label)
         
         self.player_name_label = QLabel(self.player_name)
         player_layout2.addWidget(self.player_name_label)
@@ -643,7 +628,7 @@ class MainWindow(QMainWindow):
         player_layout2.addWidget(btn)
         
         player_layout2.addStretch()
-        player_layout.addWidget(player_widget)
+        player_layout.addWidget(player_widget, 1)
         
         player_layout.addStretch(1)
         ribbon.addTab(player_tab, "Player")
@@ -652,17 +637,14 @@ class MainWindow(QMainWindow):
         help_tab = QWidget()
         help_layout = QHBoxLayout(help_tab)
         help_layout.setContentsMargins(2, 2, 2, 2)
-        help_layout.setSpacing(4)
+        help_layout.setSpacing(6)
         
         # Help grup
         help_widget = QWidget()
-        help_widget.setFixedSize(90, 120)
+        help_widget.setStyleSheet("border: 1px solid #999;")
         help_layout2 = QVBoxLayout(help_widget)
-        help_layout2.setContentsMargins(0, 0, 0, 0)
+        help_layout2.setContentsMargins(2, 2, 2, 2)
         help_layout2.setSpacing(2)
-        
-        help_label = QLabel("Help")
-        help_layout2.addWidget(help_label)
         
         for label, handler in [
             ("Yardim", self.show_help),
@@ -675,17 +657,14 @@ class MainWindow(QMainWindow):
             help_layout2.addWidget(btn)
         
         help_layout2.addStretch()
-        help_layout.addWidget(help_widget)
+        help_layout.addWidget(help_widget, 1)
         
         # Info grup
         info_widget = QWidget()
-        info_widget.setFixedSize(90, 120)
+        info_widget.setStyleSheet("border: 1px solid #999;")
         info_layout = QVBoxLayout(info_widget)
-        info_layout.setContentsMargins(0, 0, 0, 0)
+        info_layout.setContentsMargins(2, 2, 2, 2)
         info_layout.setSpacing(2)
-        
-        info_label = QLabel("Info")
-        info_layout.addWidget(info_label)
         
         self.info_avatar_name = QLabel(self.player_name)
         info_layout.addWidget(self.info_avatar_name)
@@ -700,7 +679,7 @@ class MainWindow(QMainWindow):
         info_layout.addWidget(self.info_time)
         
         info_layout.addStretch()
-        help_layout.addWidget(info_widget)
+        help_layout.addWidget(info_widget, 1)
         
         help_layout.addStretch(1)
         ribbon.addTab(help_tab, "Help")
