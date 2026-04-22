@@ -588,19 +588,19 @@ class MainWindow(QMainWindow):
         ribbon = RibbonBar(self)
         
         # 1. Butonlar kutusu
-        btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(4)
+        btn_layout = QVBoxLayout()
+        btn_layout.setSpacing(2)
         
         for text, handler in [
-            ("▶ Yeni Oyun", self.new_game),
-            ("↻ Yeniden", self.restart_game),
-            ("✕ Skorları Sıfırla", self.reset_scores)
+            ("▶\nYeni Oyun", self.new_game),
+            ("↻\nYeniden", self.restart_game),
+            ("✕\nSkorları Sıfırla", self.reset_scores)
         ]:
             btn = QPushButton(text)
             btn.clicked.connect(handler)
             btn_layout.addWidget(btn)
         
-        btn_box = self.create_buton_kutu(btn_layout)
+        btn_box = self.create_kutu(btn_layout)
         
         # 2. Kart Adedi
         self.grid_combo = QComboBox()
@@ -634,24 +634,20 @@ class MainWindow(QMainWindow):
         stats_layout.addWidget(self.lbl_matches)
         stats_layout.addWidget(self.lbl_time)
         
-        # Ana layout - her baslik kutunun ustunde
-        layout = QGridLayout(ribbon)
-        layout.setContentsMargins(4, -4, 4, 0)
-        layout.setHorizontalSpacing(2)
-        layout.setVerticalSpacing(0)
+        # Ana layout - 4 kutu
+        layout = QHBoxLayout(ribbon)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(4)
         
-        # Her baslik ilgili kutunun ustunde
-        layout.addWidget(QLabel("Oyun"), 0, 0)
-        layout.addWidget(self.create_kutu(btn_layout), 1, 0)
+        layout.addWidget(self.create_kutu(btn_layout))
         
-        layout.addWidget(QLabel("Kart"), 0, 1)
-        layout.addWidget(self.create_kutu(self.grid_combo), 1, 1)
+        layout.addWidget(self.create_kutu(self.grid_combo))
         
-        layout.addWidget(QLabel("Oyuncu"), 0, 2)
-        layout.addWidget(self.create_kutu(player_layout), 1, 2)
+        layout.addWidget(self.create_kutu(player_layout))
         
-        layout.addWidget(QLabel("İstatistik"), 0, 3)
-        layout.addWidget(self.create_kutu(stats_layout), 1, 3)
+        layout.addWidget(self.create_kutu(stats_layout))
+        
+        layout.addStretch()
         
         return ribbon
     
@@ -663,38 +659,18 @@ class MainWindow(QMainWindow):
                 background: white;
                 border: 1px solid #cccccc;
                 border-radius: 8px;
-                padding-top: 0px;
             }
         """)
         if widget:
             v_layout = QVBoxLayout(box)
-            v_layout.setContentsMargins(4, -2, 4, 0)
+            v_layout.setContentsMargins(4, 0, 4, 2)
             v_layout.setSpacing(0)
-            # Handle both widgets and layouts
             if isinstance(widget, QLayout):
                 content = QWidget()
                 content.setLayout(widget)
                 v_layout.addWidget(content)
             else:
                 v_layout.addWidget(widget)
-        return box
-    
-    def create_buton_kutu(self, layout):
-        """Butonlar için kutu"""
-        box = QFrame()
-        box.setStyleSheet("""
-            QFrame {
-                background: white;
-                border: 1px solid #cccccc;
-                border-radius: 8px;
-            }
-        """)
-        v_layout = QVBoxLayout(box)
-        v_layout.setContentsMargins(4, -2, 4, 0)
-        v_layout.setSpacing(0)
-        content = QWidget()
-        content.setLayout(layout)
-        v_layout.addWidget(content)
         return box
     
     def update_stats(self):
