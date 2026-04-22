@@ -509,10 +509,14 @@ class MainWindow(QMainWindow):
         file_layout.setSpacing(4)
         
         # File grup - New, Open recent
-        file_group_layout = QVBoxLayout()
+        file_group_widget = QWidget()
+        file_group_layout = QVBoxLayout(file_group_widget)
+        file_group_layout.setContentsMargins(0, 0, 0, 0)
         file_group_layout.setSpacing(2)
+        
         file_label = QLabel("Dosya")
-        file_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        file_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        file_label.setAlignment(Qt.AlignCenter)
         file_group_layout.addWidget(file_label)
         
         file_btn_layout = QHBoxLayout()
@@ -523,19 +527,22 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(f"{icon} {label}")
+            btn.setStyleSheet("padding: 6px 12px;")
             btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             btn.clicked.connect(handler)
             file_btn_layout.addWidget(btn)
         file_group_layout.addLayout(file_btn_layout)
-        file_layout.addLayout(file_group_layout)
-        
-        file_layout.addSpacing(20)
+        file_layout.addWidget(file_group_widget)
         
         # Save grup
-        save_group_layout = QVBoxLayout()
+        save_group_widget = QWidget()
+        save_group_layout = QVBoxLayout(save_group_widget)
+        save_group_layout.setContentsMargins(0, 0, 0, 0)
         save_group_layout.setSpacing(2)
+        
         save_label = QLabel("Kayıt")
-        save_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        save_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        save_label.setAlignment(Qt.AlignCenter)
         save_group_layout.addWidget(save_label)
         
         save_btn_layout = QHBoxLayout()
@@ -545,12 +552,12 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(f"{icon} {label}")
+            btn.setStyleSheet("padding: 6px 12px;")
             btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             btn.clicked.connect(handler)
             save_btn_layout.addWidget(btn)
         save_group_layout.addLayout(save_btn_layout)
-        save_group_layout.addStretch(1)
-        file_layout.addLayout(save_group_layout)
+        file_layout.addWidget(save_group_widget)
         
         file_layout.addStretch(1)
         ribbon.addTab(file_tab, "📁 Dosya")
@@ -562,10 +569,14 @@ class MainWindow(QMainWindow):
         home_layout.setSpacing(8)
         
         # Clipboard grup - Copy/Paste tarzı
-        clipboard_group = QVBoxLayout()
+        clipboard_widget = QWidget()
+        clipboard_group = QVBoxLayout(clipboard_widget)
+        clipboard_group.setContentsMargins(0, 0, 0, 0)
         clipboard_group.setSpacing(2)
+        
         clipboard_label = QLabel("Panom")
-        clipboard_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        clipboard_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        clipboard_label.setAlignment(Qt.AlignCenter)
         clipboard_group.addWidget(clipboard_label)
         
         clip_btn_layout = QHBoxLayout()
@@ -576,19 +587,22 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(f"{icon} {label}")
+            btn.setStyleSheet("padding: 6px 12px;")
             btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             btn.clicked.connect(handler)
             clip_btn_layout.addWidget(btn)
         clipboard_group.addLayout(clip_btn_layout)
-        home_layout.addLayout(clipboard_group)
-        
-        home_layout.addSpacing(20)
+        home_layout.addWidget(clipboard_widget)
         
         # Game grup
-        game_group = QVBoxLayout()
+        game_widget = QWidget()
+        game_group = QVBoxLayout(game_widget)
+        game_group.setContentsMargins(0, 0, 0, 0)
         game_group.setSpacing(2)
+        
         game_label = QLabel("Oyun")
-        game_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        game_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        game_label.setAlignment(Qt.AlignCenter)
         game_group.addWidget(game_label)
         
         game_btn_layout = QHBoxLayout()
@@ -596,16 +610,11 @@ class MainWindow(QMainWindow):
         
         # Grid boyutu seçici
         grid_label = QLabel("Kart:")
-        grid_label.setStyleSheet("color: #444;")
+        grid_label.setStyleSheet("color: #444; padding: 4px;")
         game_btn_layout.addWidget(grid_label)
         
         self.grid_combo = QComboBox()
-        self.grid_combo.setStyleSheet("""
-            QComboBox { 
-                padding: 4px 8px;
-                min-width: 60px;
-            }
-        """)
+        self.grid_combo.setStyleSheet("padding: 4px 8px; min-width: 80px;")
         self.grid_combo.addItems(["4x4 (16)", "4x6 (24)", "5x6 (30)", "4x8 (32)", "6x8 (48)"])
         # Grid boyutunu metne çevir
         grid_map = {'4x4 (16)': '4x4', '4x6 (24)': '4x6', '5x6 (30)': '5x6', '4x8 (32)': '4x8', '6x8 (48)': '6x8'}
@@ -615,7 +624,7 @@ class MainWindow(QMainWindow):
         game_btn_layout.addWidget(self.grid_combo)
         
         game_group.addLayout(game_btn_layout)
-        home_layout.addLayout(game_group)
+        home_layout.addWidget(game_widget)
         
         home_layout.addStretch(1)
         ribbon.addTab(home_tab, "🏠 Ana Sayfa")
@@ -627,10 +636,14 @@ class MainWindow(QMainWindow):
         insert_layout.setSpacing(8)
         
         # Player grup
-        player_group = QVBoxLayout()
+        player_widget = QWidget()
+        player_group = QVBoxLayout(player_widget)
+        player_group.setContentsMargins(0, 0, 0, 0)
         player_group.setSpacing(2)
+        
         player_label = QLabel("Oyuncu")
-        player_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        player_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        player_label.setAlignment(Qt.AlignCenter)
         player_group.addWidget(player_label)
         
         player_btn_layout = QHBoxLayout()
@@ -638,18 +651,20 @@ class MainWindow(QMainWindow):
         
         name_btn = QToolButton()
         name_btn.setText(f"👤 {self.player_name}")
+        name_btn.setStyleSheet("padding: 6px 12px;")
         name_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         name_btn.clicked.connect(self.change_name)
         player_btn_layout.addWidget(name_btn)
         
         change_btn = QToolButton()
         change_btn.setText("✏️ Değiştir")
+        change_btn.setStyleSheet("padding: 6px 12px;")
         change_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         change_btn.clicked.connect(self.change_name)
         player_btn_layout.addWidget(change_btn)
         
         player_group.addLayout(player_btn_layout)
-        insert_layout.addLayout(player_group)
+        insert_layout.addWidget(player_widget)
         
         insert_layout.addStretch(1)
         ribbon.addTab(insert_tab, "👤 Oyuncu")
@@ -661,10 +676,14 @@ class MainWindow(QMainWindow):
         help_layout.setSpacing(8)
         
         # Help grup
-        help_group = QVBoxLayout()
+        help_widget = QWidget()
+        help_group = QVBoxLayout(help_widget)
+        help_group.setContentsMargins(0, 0, 0, 0)
         help_group.setSpacing(2)
+        
         help_label = QLabel("Yardım")
-        help_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        help_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        help_label.setAlignment(Qt.AlignCenter)
         help_group.addWidget(help_label)
         
         help_btn_layout = QHBoxLayout()
@@ -675,40 +694,41 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(f"{icon} {label}")
+            btn.setStyleSheet("padding: 6px 12px;")
             btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             btn.clicked.connect(handler)
             help_btn_layout.addWidget(btn)
         help_group.addLayout(help_btn_layout)
-        help_group.addStretch(1)
-        help_layout.addLayout(help_group)
+        help_layout.addWidget(help_widget)
         
-        # Comments tarzı - sol tarafta her zaman
-        help_layout.addSpacing(20)
-        
-        comment_group = QVBoxLayout()
+        # Bilgi grup
+        info_widget = QWidget()
+        comment_group = QVBoxLayout(info_widget)
+        comment_group.setContentsMargins(0, 0, 0, 0)
         comment_group.setSpacing(2)
+        
         comment_label = QLabel("Bilgi")
-        comment_label.setStyleSheet("font-weight: 600; color: #666; font-size: 11px;")
+        comment_label.setStyleSheet("font-weight: bold; color: #333; font-size: 12px; background: #ddd; padding: 4px 8px; border-radius: 3px;")
+        comment_label.setAlignment(Qt.AlignCenter)
         comment_group.addWidget(comment_label)
         
         self.info_avatar_name = QLabel(f"👤 {self.player_name}")
-        self.info_avatar_name.setStyleSheet("font-size: 12px;")
+        self.info_avatar_name.setStyleSheet("padding: 4px; font-size: 12px;")
         comment_group.addWidget(self.info_avatar_name)
         
         self.info_moves = QLabel("Adımlar: 0")
-        self.info_moves.setStyleSheet("font-size: 12px;")
+        self.info_moves.setStyleSheet("padding: 4px; font-size: 12px;")
         comment_group.addWidget(self.info_moves)
         
         self.info_matches = QLabel("Eşleştirme: 0/0")
-        self.info_matches.setStyleSheet("font-size: 12px;")
+        self.info_matches.setStyleSheet("padding: 4px; font-size: 12px;")
         comment_group.addWidget(self.info_matches)
         
         self.info_time = QLabel("Süre: 00:00")
-        self.info_time.setStyleSheet("font-size: 12px;")
+        self.info_time.setStyleSheet("padding: 4px; font-size: 12px;")
         comment_group.addWidget(self.info_time)
         
-        comment_group.addStretch(1)
-        help_layout.addLayout(comment_group)
+        help_layout.addWidget(info_widget)
         
         help_layout.addStretch(1)
         ribbon.addTab(help_tab, "❓ Yardım")
