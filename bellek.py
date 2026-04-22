@@ -8,6 +8,7 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass, field
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
     QHBoxLayout, QVBoxLayout, QGridLayout, QToolButton, QTabWidget, QLabel, QComboBox,
@@ -592,16 +593,25 @@ class MainWindow(QMainWindow):
         """Toolbar - Rounded boxes"""
         ribbon = RibbonBar(self)
         
-        # 1. Butonlar kutusu
+        # 1. Butonlar kutusu - ikon ustte, yazi altta, 3 kutu yan yana
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(4)
         
-        for text, handler in [
-            ("Yeni Oyun", self.new_game),
-            ("Yeniden", self.restart_game),
-            ("Skorları Sıfırla", self.reset_scores)
+        for icon, text, handler in [
+            ("▶", "Yeni Oyun", self.new_game),
+            ("↻", "Yeniden", self.restart_game),
+            ("✕", "Skorları Sıfırla", self.reset_scores)
         ]:
-            btn = QPushButton(text)
+            v = QVBoxLayout()
+            v.setSpacing(0)
+            lbl_icon = QLabel(icon)
+            lbl_icon.setAlignment(Qt.AlignCenter)
+            lbl_text = QLabel(text)
+            lbl_text.setAlignment(Qt.AlignCenter)
+            v.addWidget(lbl_icon)
+            v.addWidget(lbl_text)
+            btn = QPushButton()
+            btn.setLayout(v)
             btn.clicked.connect(handler)
             btn_layout.addWidget(btn)
         
