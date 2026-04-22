@@ -602,18 +602,20 @@ class MainWindow(QMainWindow):
             ("↻", "Yeniden", self.restart_game),
             ("✕", "Skorları Sıfırla", self.reset_scores)
         ]:
-            v = QVBoxLayout()
-            v.setSpacing(0)
+            item = QWidget()
+            v = QVBoxLayout(item)
+            v.setSpacing(2)
+            v.setContentsMargins(8, 4, 8, 4)
             lbl_icon = QLabel(icon)
             lbl_icon.setAlignment(Qt.AlignCenter)
+            lbl_icon.setStyleSheet("font-size: 24px;")
             lbl_text = QLabel(text)
             lbl_text.setAlignment(Qt.AlignCenter)
+            lbl_text.setStyleSheet("font-size: 12px;")
             v.addWidget(lbl_icon)
             v.addWidget(lbl_text)
-            btn = QPushButton()
-            btn.setLayout(v)
-            btn.clicked.connect(handler)
-            btn_layout.addWidget(btn)
+            item.mousePressEvent = lambda e, h=handler: h()
+            btn_layout.addWidget(item)
         
         btn_box = self.create_kutu(btn_layout)
         
