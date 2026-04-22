@@ -26,6 +26,11 @@ class RibbonBar(QWidget):
         self.setFixedHeight(100)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
+            QFrame#box {
+                background: white;
+                border: 1px solid #cccccc;
+                border-radius: 8px;
+            }
             QPushButton {
                 border: none;
                 background: white;
@@ -654,13 +659,7 @@ class MainWindow(QMainWindow):
     def create_kutu(self, widget):
         """Kenarı yuvarlatılmış kutu"""
         box = QFrame()
-        box.setStyleSheet("""
-            QFrame {
-                background: white;
-                border: 1px solid #cccccc;
-                border-radius: 8px;
-            }
-        """)
+        box.setObjectName("box")
         if widget:
             v_layout = QVBoxLayout(box)
             v_layout.setContentsMargins(4, 0, 4, 2)
