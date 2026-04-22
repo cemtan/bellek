@@ -637,7 +637,7 @@ class MainWindow(QMainWindow):
         
         # Ana layout - her baslik kutunun ustunde
         layout = QGridLayout(ribbon)
-        layout.setContentsMargins(4, 0, 4, 0)
+        layout.setContentsMargins(4, -4, 4, 0)
         layout.setHorizontalSpacing(2)
         layout.setVerticalSpacing(0)
         
@@ -669,7 +669,7 @@ class MainWindow(QMainWindow):
         """)
         if widget:
             v_layout = QVBoxLayout(box)
-            v_layout.setContentsMargins(4, 0, 4, 2)
+            v_layout.setContentsMargins(4, -2, 4, 0)
             v_layout.setSpacing(0)
             # Handle both widgets and layouts
             if isinstance(widget, QLayout):
@@ -691,7 +691,7 @@ class MainWindow(QMainWindow):
             }
         """)
         v_layout = QVBoxLayout(box)
-        v_layout.setContentsMargins(4, 0, 4, 2)
+        v_layout.setContentsMargins(4, -2, 4, 0)
         v_layout.setSpacing(0)
         content = QWidget()
         content.setLayout(layout)
