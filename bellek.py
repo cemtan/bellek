@@ -671,9 +671,13 @@ class MainWindow(QMainWindow):
             label = QLabel(title)
             v_layout.addWidget(label)
         if content_layout:
-            content = QWidget()
-            content.setLayout(content_layout)
-            v_layout.addWidget(content)
+            # Check if it's a widget or a layout
+            if isinstance(content_layout, QWidget):
+                v_layout.addWidget(content_layout)
+            else:
+                content = QWidget()
+                content.setLayout(content_layout)
+                v_layout.addWidget(content)
         return box
     
     def update_stats(self):
