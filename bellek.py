@@ -28,13 +28,12 @@ class RibbonBar(QWidget):
             QWidget { background-color: #f3f3f3; }
             QPushButton {
                 border: none;
-                background: #4472C4;
-                color: white;
-                padding: 8px 16px;
-                border-radius: 6px;
-                font-weight: bold;
+                background: white;
+                color: #333333;
+                padding: 4px 8px;
+                border-radius: 4px;
             }
-            QPushButton:hover { background: #5a8cf0; }
+            QPushButton:hover { background: #eaeaea; }
             QLineEdit, QComboBox {
                 border: 1px solid #cccccc;
                 border-radius: 4px;
@@ -593,9 +592,9 @@ class MainWindow(QMainWindow):
         btn_layout.setSpacing(4)
         
         for text, handler in [
-            ("🆕 Yeni Oyun", self.new_game),
-            ("🔄 Yeniden", self.restart_game),
-            ("🗑 Skorları Sıfırla", self.reset_scores)
+            ("▶ Yeni Oyun", self.new_game),
+            ("↻ Yeniden", self.restart_game),
+            ("✕ Skorları Sıfırla", self.reset_scores)
         ]:
             btn = QPushButton(text)
             btn.clicked.connect(handler)
