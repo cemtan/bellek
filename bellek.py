@@ -8,8 +8,12 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass, field
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QMenu, QAction
-from PyQt5.QtCore import Qt, QRect, QTimer
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
+    QHBoxLayout, QVBoxLayout, QToolButton, QTabWidget, QLabel, QComboBox,
+    QPushButton, QTableWidget, QTableWidgetItem
+)
+from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
 import base64
 import tempfile
@@ -530,6 +534,84 @@ class MainWindow(QMainWindow):
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
         self.game_widget.setParent(self)
         self.setCentralWidget(self.game_widget)
+        
+        # Ribbon (skor tablosu ile)
+        self.ribbon = self.create_ribbon()
+        self.ribbon.setParent(self.game_widget)
+        self.ribbon.raise_()
+        self.position_info_ribbon()
+        self.game_widget.state_changed.connect(self.refresh_info_tab)
+        self.refresh_info_tab()
+
+    def create_ribbon(self):
+        """OnlyOffice tarzı ribbon - skor tablosu dahil"""
+        ribbon = QTabWidget(self)
+        ribbon.setDocumentMode(True)
+        
+        # ===== SCORES TAB =====
+        scores_tab = QWidget()
+        scores_layout = QVBoxLayout(scores_tab)
+        scores_layout.setContentsMargins(4, 4, 4, 4)
+        
+        # Toggle button
+        self.scores_toggle_btn = QPushButton("▼ Skorlar (" + self.grid_size + ")")
+        self.scores_toggle_btn.setCheckable(True)
+        self.scores_toggle_btn.setChecked(True)
+        self.scores_toggle_btn.clicked.connect(self.toggle_scores_panel)
+        scores_layout.addWidget(self.scores_toggle_btn)
+        
+        # Scores table
+        self.scores_table = QTableWidget()
+        self.scores_table.setColumnCount(4)
+        self.scores_table.setHorizontalHeaderLabels(["Sira", "Oyuncu", "Adim", "Sure"])
+        self.scores_table.setMinimumHeight(200)
+        self.update_scores_table()
+        scores_layout.addWidget(self.scores_table)
+        
+        ribbon.addTab(scores_tab, "Skorlar")
+        
+        return ribbon
+
+    def toggle_scores_panel(self, checked):
+        """Skor panelini aç/kapa"""
+        if hasattr(self, 'scores_table'):
+            self.scores_table.setVisible(checked)
+        if hasattr(self, 'scores_toggle_btn'):
+            self.scores_toggle_btn.setText("▶ Skorlar (" + self.grid_size + ")" if not checked else "▼ Skorlar (" + self.grid_size + ")")
+
+    def update_scores_table(self):
+        """Skor tablosunu güncelle"""
+        if not hasattr(self, 'scores_table'):
+            return
+        scores = self.score_manager.get_top_scores(self.grid_size)
+        self.scores_table.setRowCount(len(scores))
+        for i, entry in enumerate(scores):
+            self.scores_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
+            self.scores_table.setItem(i, 1, QTableWidgetItem(entry.get('name', '')))
+            self.scores_table.setItem(i, 2, QTableWidgetItem(str(entry.get('moves', 0))))
+            self.scores_table.setItem(i, 3, QTableWidgetItem(str(entry.get('duration', 0))))
+
+    def position_info_ribbon(self):
+        if not hasattr(self, "game_widget") or not hasattr(self, "ribbon"):
+            return
+        gw = self.game_widget
+        panel_h = gw.top_panel_height
+        x = 4
+        y = 4
+        w = gw.width() - 8
+        h = panel_h - 8
+        self.ribbon.setGeometry(x, y, w, h)
+        self.ribbon.show()
+
+    def refresh_info_tab(self):
+        if not hasattr(self, "game_widget"):
+            return
+        gw = self.game_widget
+        if hasattr(self, "info_avatar_name") and self.info_avatar_name:
+            self.info_avatar_name.setText(f"Player: {self.player_name}")
+            self.info_moves.setText(f"Adimlar: {gw.moves}")
+            self.info_matches.setText(f"Esleme: {gw.matched_pairs}/{gw.total_pairs}")
+            self.info_time.setText(f"Sure: {gw.format_time()}")
     
     def create_menu_bar(self):
         """Menü çubuğu oluştur"""
