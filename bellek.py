@@ -23,7 +23,7 @@ class RibbonBar(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedHeight(90)
+        self.setFixedHeight(120)
         self.setStyleSheet("""
             QWidget { background-color: #f3f3f3; }
             QPushButton {
