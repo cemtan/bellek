@@ -11,54 +11,38 @@ from dataclasses import dataclass, field
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
     QHBoxLayout, QVBoxLayout, QToolButton, QTabWidget, QLabel, QComboBox,
-    QPushButton, QTableWidget, QTableWidgetItem, QMenu
+    QPushButton, QTableWidget, QTableWidgetItem, QMenu, QLineEdit, QFrame
 )
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
 
 
 # ============== RIBBON SINIFI ==============
-class RibbonBar(QTabWidget):
-    """MS Office tarzı Ribbon Menu"""
+class RibbonBar(QWidget):
+    """Toolbar widget"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setDocumentMode(True)
+        self.setFixedHeight(70)
         self.setStyleSheet("""
-            QTabWidget::pane { border: 1px solid #cccccc; background: #f3f3f3; }
-            QTabBar::tab { background: #e0e0e0; padding: 6px 16px; border: none; }
-            QTabBar::tab:selected { background: #4472C4; color: white; }
-            QPushButton { border: none; background: transparent; padding: 4px 8px; }
-            QPushButton:hover { background: #d9d9d9; }
+            QWidget { background-color: #f3f3f3; }
+            QPushButton {
+                border: none;
+                background: #4472C4;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: bold;
+            }
+            QPushButton:hover { background: #5a8cf0; }
+            QLineEdit, QComboBox {
+                border: 1px solid #cccccc;
+                border-radius: 4px;
+                padding: 4px 8px;
+                background: white;
+            }
+            QLabel { color: #333333; }
         """)
-    
-    def addRibbonTab(self, title):
-        widget = QWidget()
-        layout = QHBoxLayout(widget)
-        layout.setContentsMargins(4, 4, 4, 4)
-        layout.setSpacing(8)
-        self.addTab(widget, title)
-        return widget, layout
-    
-    def addRibbonGroup(self, parent_layout, title):
-        group = QWidget()
-        group.setFixedWidth(100)
-        v_layout = QVBoxLayout(group)
-        v_layout.setContentsMargins(2, 2, 2, 2)
-        v_layout.setSpacing(2)
-        
-        label = QLabel(title)
-        label.setStyleSheet("font-weight: bold; font-size: 10px; color: white; background: #4472C4; padding: 2px 6px;")
-        label.setAlignment(Qt.AlignCenter)
-        v_layout.addWidget(label)
-        
-        buttons = QWidget()
-        btn_layout = QVBoxLayout(buttons)
-        btn_layout.setSpacing(2)
-        v_layout.addWidget(buttons)
-        
-        parent_layout.addWidget(group)
-        return buttons, btn_layout
 
 
 # ============== KART SINIFI ==============
@@ -574,17 +558,15 @@ class MainWindow(QMainWindow):
             pass
         self.score_manager = ScoreManager()
         
-        # Ribbon menu oluştur
-        self.ribbon = self.create_ribbon()
-        
-        # Oyun widget'ı
+        # Info panel + Oyun widget
+        self.info_panel = self.create_info_panel()
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
         
-        # Layout: ribbon + oyun
+        # Layout
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
-        main_layout.addWidget(self.ribbon)
+        main_layout.addWidget(self.info_panel)
         main_layout.addWidget(self.game_widget)
         
         central = QWidget()
@@ -602,48 +584,108 @@ class MainWindow(QMainWindow):
         help_action.triggered.connect(self.show_help)
         help_menu.addAction(help_action)
     
-    def create_ribbon(self):
-        """Ribbon menu - OnlyOffice tarzı"""
+    def create_info_panel(self):
+        """Toolbar - Rounded boxes"""
         ribbon = RibbonBar(self)
         
-        # === FILE TAB ===
-        tab, layout = ribbon.addRibbonTab("File")
+        # 1. Butonlar kutusu
+        btn_layout = QHBoxLayout()
+        btn_layout.setSpacing(4)
         
-        btn_widget, btn_layout = ribbon.addRibbonGroup(layout, "New")
-        for label, handler in [("Yeni Oyun", self.new_game), ("Yeniden", self.restart_game)]:
-            btn = QPushButton(label)
+        for text, handler in [
+            ("🆕 Yeni Oyun", self.new_game),
+            ("🔄 Yeniden", self.restart_game),
+            ("🗑 Skorları Sıfırla", self.reset_scores)
+        ]:
+            btn = QPushButton(text)
             btn.clicked.connect(handler)
             btn_layout.addWidget(btn)
         
-        btn_widget2, btn_layout2 = ribbon.addRibbonGroup(layout, "Actions")
-        for label, handler in [("Skorları Sıfırla", self.reset_scores), ("Çıkış", self.close)]:
-            btn = QPushButton(label)
-            btn.clicked.connect(handler)
-            btn_layout2.addWidget(btn)
+        btn_box = self.create_box("Oyun", btn_layout)
         
-        layout.addStretch()
-        
-        # === HOME TAB ===
-        tab2, layout2 = ribbon.addRibbonTab("Home")
-        
-        btn_widget3, btn_layout3 = ribbon.addRibbonGroup(layout2, "Game")
-        label = QLabel("Kart:")
-        label.setStyleSheet("font-size: 11px;")
-        btn_layout3.addWidget(label)
+        # 2. Kart Adedi dropdown
         self.grid_combo = QComboBox()
         self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
         self.grid_combo.setCurrentText(self.grid_size)
         self.grid_combo.currentTextChanged.connect(self.change_grid_size)
-        btn_layout3.addWidget(self.grid_combo)
+        grid_box = self.create_box("Kart Adedi", self.grid_combo)
         
-        btn_widget4, btn_layout4 = ribbon.addRibbonGroup(layout2, "Player")
-        self.name_btn = QPushButton("👤 " + self.player_name)
-        self.name_btn.clicked.connect(self.change_name)
-        btn_layout4.addWidget(self.name_btn)
+        # 3. Oyuncu kutusu
+        player_layout = QHBoxLayout()
+        player_layout.setSpacing(4)
+        self.name_label = QLabel(self.player_name)
+        name_edit = QLineEdit()
+        name_edit.setText(self.player_name)
+        name_edit.setFixedWidth(100)
+        name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
+        change_btn = QPushButton("Ad Değiştir")
+        change_btn.clicked.connect(lambda: self.change_name(name_edit.text()))
+        player_layout.addWidget(self.name_label)
+        player_layout.addWidget(name_edit)
+        player_layout.addWidget(change_btn)
+        player_box = self.create_box("Oyuncu", player_layout)
         
-        layout2.addStretch()
+        # 4. Stats kutusu
+        stats_layout = QHBoxLayout()
+        stats_layout.setSpacing(8)
+        
+        self.lbl_moves = QLabel("Adımlar: 0")
+        self.lbl_matches = QLabel("Eşleştirmeler: 0")
+        self.lbl_time = QLabel("Süre: 00:00")
+        
+        stats_layout.addWidget(self.lbl_moves)
+        stats_layout.addWidget(self.lbl_matches)
+        stats_layout.addWidget(self.lbl_time)
+        
+        stats_box = self.create_box("İstatistik", stats_layout)
+        
+        # Ana layout
+        layout = QHBoxLayout(ribbon)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(8)
+        layout.addWidget(btn_box)
+        layout.addWidget(grid_box)
+        layout.addWidget(player_box)
+        layout.addWidget(stats_box)
+        layout.addStretch()
         
         return ribbon
+    
+    def create_box(self, title, content_layout):
+        """Kenarları yuvarlatılmış kutu"""
+        box = QFrame()
+        box.setStyleSheet("""
+            QFrame {
+                background: white;
+                border: 1px solid #cccccc;
+                border-radius: 8px;
+            }
+            QLabel {
+                font-weight: bold;
+                color: #4472C4;
+            }
+        """)
+        v_layout = QVBoxLayout(box)
+        v_layout.setContentsMargins(8, 4, 8, 4)
+        if title:
+            label = QLabel(title)
+            v_layout.addWidget(label)
+        if content_layout:
+            content = QWidget()
+            content.setLayout(content_layout)
+            v_layout.addWidget(content)
+        return box
+    
+    def update_stats(self):
+        """İstatistikleri güncelle"""
+        if hasattr(self, 'game_widget'):
+            gw = self.game_widget
+            if hasattr(self, 'lbl_moves'):
+                self.lbl_moves.setText(f"Adımlar: {gw.moves}")
+            if hasattr(self, 'lbl_matches'):
+                self.lbl_matches.setText(f"Eşleştirmeler: {gw.matched_pairs}/{gw.total_pairs}")
+            if hasattr(self, 'lbl_time'):
+                self.lbl_time.setText(f"Süre: {gw.format_time()}")
     
     def new_game(self):
         """Yeni oyun"""
@@ -659,14 +701,13 @@ class MainWindow(QMainWindow):
         
         # Layout güncelle
         main = self.centralWidget().layout()
-        main.itemAt(1).widget().deleteLater()
+        old = main.itemAt(1).widget()
+        if old:
+            old.deleteLater()
         main.insertWidget(1, self.game_widget)
         
-        # Ribbon güncelle
-        if hasattr(self, 'name_btn'):
-            self.name_btn.setText("👤 " + self.player_name)
-        if hasattr(self, 'grid_combo'):
-            self.grid_combo.setCurrentText(self.grid_size)
+        # Stats güncelle
+        self.update_stats()
         
         self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
     
@@ -706,12 +747,18 @@ Platform: Linux KDE uyumlu"""
         self.grid_size = grid_size
         self.restart_game()
     
-    def change_name(self):
+    def change_name(self, new_name=None):
         """İsim değiştir"""
-        name, ok = QInputDialog.getText(self, "👤 Oyuncu", "Yeni isminiz:", text=self.player_name)
-        if ok and name.strip():
-            self.player_name = name.strip()
+        if new_name is None:
+            name, ok = QInputDialog.getText(self, "👤 Oyuncu", "Yeni isminiz:", text=self.player_name)
+            if ok and name.strip():
+                new_name = name.strip()
+        
+        if new_name and new_name.strip():
+            self.player_name = new_name.strip()
             self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
+            if hasattr(self, 'name_label'):
+                self.name_label.setText(self.player_name)
             if hasattr(self, 'game_widget') and self.game_widget:
                 self.game_widget.player_name = self.player_name
                 self.game_widget.update()
