@@ -123,7 +123,7 @@ class GameWidget(QWidget):
         
         self.reset_btn_rect = QRect()
         self.reset_btn_hover = False
-        self.top_panel_height = 70
+        self.top_panel_height = 160
         self.score_panel_expanded_width = 320
         self.score_panel_collapsed_width = 44
         self.score_panel_collapsed = False
@@ -530,7 +530,6 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(f"{icon} {label}")
-            btn.setMinimumHeight(24)
             btn.clicked.connect(handler)
             new_layout.addWidget(btn)
         
@@ -546,7 +545,7 @@ class MainWindow(QMainWindow):
         
         btn = QToolButton()
         btn.setText("Sifirla")
-        btn.setMinimumHeight(24)
+        
         btn.clicked.connect(self.reset_scores)
         save_layout.addWidget(btn)
         
@@ -596,7 +595,7 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(label)
-            btn.setMinimumHeight(24)
+            
             btn.clicked.connect(handler)
             action_layout.addWidget(btn)
         
@@ -623,7 +622,7 @@ class MainWindow(QMainWindow):
         
         btn = QToolButton()
         btn.setText("Degistir")
-        btn.setMinimumHeight(24)
+        
         btn.clicked.connect(self.change_name)
         player_layout2.addWidget(btn)
         
@@ -652,7 +651,7 @@ class MainWindow(QMainWindow):
         ]:
             btn = QToolButton()
             btn.setText(label)
-            btn.setMinimumHeight(24)
+            
             btn.clicked.connect(handler)
             help_layout2.addWidget(btn)
         
@@ -691,13 +690,10 @@ class MainWindow(QMainWindow):
             return
         gw = self.game_widget
         panel_h = gw.top_panel_height
-        x = 8
+        x = 4
         y = 4
-        w = gw.width() - 16
+        w = gw.width() - 8
         h = panel_h - 8
-        if w < 300:
-            self.ribbon.hide()
-            return
         self.ribbon.setGeometry(x, y, w, h)
         self.ribbon.show()
 
