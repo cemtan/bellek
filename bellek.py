@@ -25,7 +25,7 @@ class RibbonBar(QWidget):
         super().__init__(parent)
         self.setFixedHeight(100)
         self.setStyleSheet("""
-            QWidget { background-color: #f3f3f3; }
+            QWidget { background-color: white; }
             QFrame#box {
                 background: white;
                 border: 1px solid #cccccc;
@@ -597,9 +597,9 @@ class MainWindow(QMainWindow):
         btn_layout.setSpacing(4)
         
         for text, handler in [
-            ("▶\nYeni Oyun", self.new_game),
-            ("↻\nYeniden", self.restart_game),
-            ("✕\nSkorları Sıfırla", self.reset_scores)
+            ("Yeni Oyun", self.new_game),
+            ("Yeniden", self.restart_game),
+            ("Skorları Sıfırla", self.reset_scores)
         ]:
             btn = QPushButton(text)
             btn.clicked.connect(handler)
