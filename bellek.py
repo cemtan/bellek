@@ -15,8 +15,51 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
-import base64
-import tempfile
+
+
+# ============== RIBBON SINIFI ==============
+class RibbonBar(QTabWidget):
+    """MS Office tarzı Ribbon Menu"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setDocumentMode(True)
+        self.setStyleSheet("""
+            QTabWidget::pane { border: 1px solid #cccccc; background: #f3f3f3; }
+            QTabBar::tab { background: #e0e0e0; padding: 6px 16px; border: none; }
+            QTabBar::tab:selected { background: #4472C4; color: white; }
+            QPushButton { border: none; background: transparent; padding: 4px 8px; }
+            QPushButton:hover { background: #d9d9d9; }
+        """)
+    
+    def addRibbonTab(self, title):
+        widget = QWidget()
+        layout = QHBoxLayout(widget)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(8)
+        self.addTab(widget, title)
+        return widget, layout
+    
+    def addRibbonGroup(self, parent_layout, title):
+        group = QWidget()
+        group.setFixedWidth(100)
+        v_layout = QVBoxLayout(group)
+        v_layout.setContentsMargins(2, 2, 2, 2)
+        v_layout.setSpacing(2)
+        
+        label = QLabel(title)
+        label.setStyleSheet("font-weight: bold; font-size: 10px; color: white; background: #4472C4; padding: 2px 6px;")
+        label.setAlignment(Qt.AlignCenter)
+        v_layout.addWidget(label)
+        
+        buttons = QWidget()
+        btn_layout = QVBoxLayout(buttons)
+        btn_layout.setSpacing(2)
+        v_layout.addWidget(buttons)
+        
+        parent_layout.addWidget(group)
+        return buttons, btn_layout
+
 
 # ============== KART SINIFI ==============
 @dataclass
@@ -531,74 +574,113 @@ class MainWindow(QMainWindow):
             pass
         self.score_manager = ScoreManager()
         
-        # Menü çubuğu oluştur
-        self.create_menu_bar()
+        # Ribbon menu oluştur
+        self.ribbon = self.create_ribbon()
         
         # Oyun widget'ı
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
-        self.game_widget.setParent(self)
-        self.setCentralWidget(self.game_widget)
+        
+        # Layout: ribbon + oyun
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+        main_layout.addWidget(self.ribbon)
+        main_layout.addWidget(self.game_widget)
+        
+        central = QWidget()
+        central.setLayout(main_layout)
+        self.setCentralWidget(central)
     
     def create_menu_bar(self):
-        """Menü çubuğu oluştur"""
+        """Menü çubuğu (minimal)"""
         menubar = self.menuBar()
         
-        # Oyun menüsü
-        game_menu = menubar.addMenu("🎮 Oyun")
-        
-        # Yeni oyun
-        new_action = QAction("🆕 Yeni Oyun", self)
-        new_action.setShortcut("Ctrl+N")
-        new_action.triggered.connect(self.new_game)
-        game_menu.addAction(new_action)
-        
-        # Yeniden başlat
-        restart_action = QAction("🔄 Yeniden Başlat", self)
-        restart_action.setShortcut("Ctrl+R")
-        restart_action.triggered.connect(self.restart_game)
-        game_menu.addAction(restart_action)
-        
-        game_menu.addSeparator()
-        
-        # Kart adedi alt menüsü
-        grid_menu = QMenu("📊 Kart Adedi", self)
-        
-        for label, size in [("4x4 (16 kart)", "4x4"), ("4x6 (24 kart)", "4x6"),
-                          ("5x6 (30 kart)", "5x6"), ("4x8 (32 kart)", "4x8"),
-                          ("6x8 (48 kart)", "6x8")]:
-            action = QAction(label, self)
-            action.triggered.connect(lambda checked, s=size: self.change_grid_size(s))
-            grid_menu.addAction(action)
-        
-        game_menu.addMenu(grid_menu)
-        
-        game_menu.addSeparator()
-        
-        reset_action = QAction("🗑 Skorları Sıfırla", self)
-        reset_action.triggered.connect(self.reset_scores)
-        game_menu.addAction(reset_action)
-        
-        # Çıkış
-        exit_action = QAction("✖ Çıkış", self)
-        exit_action.setShortcut("Ctrl+Q")
-        exit_action.triggered.connect(self.close)
-        game_menu.addAction(exit_action)
-        
-        # Oyuncu menüsü
-        player_menu = menubar.addMenu("👤 Oyuncu")
-        
-        name_action = QAction("📝 İsim Değiştir", self)
-        name_action.triggered.connect(self.change_name)
-        player_menu.addAction(name_action)
-        
-        
+        # Sadece Yardım
         help_menu = menubar.addMenu("❓ Yardım")
-        
         help_action = QAction("📖 Nasıl Oynanır", self)
         help_action.setShortcut("F1")
         help_action.triggered.connect(self.show_help)
         help_menu.addAction(help_action)
     
+    def create_ribbon(self):
+        """Ribbon menu - OnlyOffice tarzı"""
+        ribbon = RibbonBar(self)
+        
+        # === FILE TAB ===
+        tab, layout = ribbon.addRibbonTab("File")
+        
+        btn_widget, btn_layout = ribbon.addRibbonGroup(layout, "New")
+        for label, handler in [("Yeni Oyun", self.new_game), ("Yeniden", self.restart_game)]:
+            btn = QPushButton(label)
+            btn.clicked.connect(handler)
+            btn_layout.addWidget(btn)
+        
+        btn_widget2, btn_layout2 = ribbon.addRibbonGroup(layout, "Actions")
+        for label, handler in [("Skorları Sıfırla", self.reset_scores), ("Çıkış", self.close)]:
+            btn = QPushButton(label)
+            btn.clicked.connect(handler)
+            btn_layout2.addWidget(btn)
+        
+        layout.addStretch()
+        
+        # === HOME TAB ===
+        tab2, layout2 = ribbon.addRibbonTab("Home")
+        
+        btn_widget3, btn_layout3 = ribbon.addRibbonGroup(layout2, "Game")
+        label = QLabel("Kart:")
+        label.setStyleSheet("font-size: 11px;")
+        btn_layout3.addWidget(label)
+        self.grid_combo = QComboBox()
+        self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
+        self.grid_combo.setCurrentText(self.grid_size)
+        self.grid_combo.currentTextChanged.connect(self.change_grid_size)
+        btn_layout3.addWidget(self.grid_combo)
+        
+        btn_widget4, btn_layout4 = ribbon.addRibbonGroup(layout2, "Player")
+        self.name_btn = QPushButton("👤 " + self.player_name)
+        self.name_btn.clicked.connect(self.change_name)
+        btn_layout4.addWidget(self.name_btn)
+        
+        layout2.addStretch()
+        
+        # === SCORES TAB ===
+        tab3, layout3 = ribbon.addRibbonTab("Skorlar")
+        
+        self.scores_toggle_btn = QPushButton("▶ Skorlar")
+        self.scores_toggle_btn.setCheckable(True)
+        self.scores_toggle_btn.setChecked(True)
+        self.scores_toggle_btn.clicked.connect(self.toggle_scores)
+        self.scores_toggle_btn.setStyleSheet("font-weight: bold; text-align: left;")
+        layout3.addWidget(self.scores_toggle_btn)
+        
+        self.scores_table = QTableWidget()
+        self.scores_table.setColumnCount(4)
+        self.scores_table.setHorizontalHeaderLabels(["Sıra", "Oyuncu", "Adım", "Süre"])
+        self.scores_table.setMinimumHeight(150)
+        self.update_scores_table()
+        layout3.addWidget(self.scores_table)
+        
+        layout3.addStretch()
+        
+        return ribbon
+    
+    def toggle_scores(self, checked):
+        if hasattr(self, 'scores_table'):
+            self.scores_table.setVisible(checked)
+        if hasattr(self, 'scores_toggle_btn'):
+            self.scores_toggle_btn.setText("▶ Skorlar" if not checked else "▼ Skorlar")
+    
+    def update_scores_table(self):
+        if not hasattr(self, 'scores_table'):
+            return
+        scores = self.score_manager.get_top_scores(self.grid_size)
+        self.scores_table.setRowCount(len(scores))
+        for i, entry in enumerate(scores):
+            self.scores_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
+            self.scores_table.setItem(i, 1, QTableWidgetItem(entry.get('name', '')))
+            self.scores_table.setItem(i, 2, QTableWidgetItem(str(entry.get('moves', 0))))
+            self.scores_table.setItem(i, 3, QTableWidgetItem(str(entry.get('duration', 0))))
+
     def new_game(self):
         """Yeni oyun"""
         name, ok = QInputDialog.getText(self, "🆕 Yeni Oyun", "Oyuncu adı:", text=self.player_name)
@@ -608,8 +690,20 @@ class MainWindow(QMainWindow):
     
     def restart_game(self):
         """Oyunu yeniden başlat"""
+        # Yeni oyun widget
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
-        self.setCentralWidget(self.game_widget)
+        
+        # Layout güncelle
+        main = self.centralWidget().layout()
+        main.itemAt(1).widget().deleteLater()
+        main.insertWidget(1, self.game_widget)
+        
+        # Ribbon güncelle
+        if hasattr(self, 'name_btn'):
+            self.name_btn.setText("👤 " + self.player_name)
+        if hasattr(self, 'grid_combo'):
+            self.grid_combo.setCurrentText(self.grid_size)
+        
         self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
     
     def reset_scores(self):
