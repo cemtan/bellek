@@ -87,6 +87,9 @@ class ScoreManager:
 
 
 class GameWidget(QWidget):
+    # Signal for state changes
+    state_changed = pyqtSignal()
+    
     def __init__(self, player_name, score_manager, grid_size='6x8'):
         super().__init__()
         
@@ -127,7 +130,7 @@ class GameWidget(QWidget):
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 8
         self.sidebar_resizing = False
-        self.top_panel_height = 70
+        self.top_panel_height = 250
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
@@ -151,6 +154,7 @@ class GameWidget(QWidget):
 
     def tick_time(self):
         self.elapsed_seconds += 1
+        self.state_changed.emit()
         self.update()
 
     def format_time(self):
@@ -392,6 +396,7 @@ class GameWidget(QWidget):
                 elif self.second_flipped == -1:
                     self.second_flipped = i
                     self.moves += 1
+                    self.state_changed.emit()
                     if not self.timer_running:
                         self.game_timer.start()
                         self.timer_running = True
@@ -435,6 +440,7 @@ class GameWidget(QWidget):
             first_card.is_matched = True
             second_card.is_matched = True
             self.matched_pairs += 1
+            self.state_changed.emit()
             
             if self.matched_pairs == self.total_pairs:
                 self.game_active = False
