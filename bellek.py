@@ -8,11 +8,8 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass, field
 
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
-    QHBoxLayout, QVBoxLayout, QToolButton, QTabWidget, QLabel, QComboBox
-)
-from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QMenu, QAction
+from PyQt5.QtCore import Qt, QRect, QTimer
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
 import base64
 import tempfile
@@ -86,8 +83,6 @@ class ScoreManager:
 
 
 class GameWidget(QWidget):
-    state_changed = pyqtSignal()
-
     def __init__(self, player_name, score_manager, grid_size='6x8'):
         super().__init__()
         
@@ -123,11 +118,12 @@ class GameWidget(QWidget):
         
         self.reset_btn_rect = QRect()
         self.reset_btn_hover = False
-        self.top_panel_height = 160
-        self.score_panel_expanded_width = 320
-        self.score_panel_collapsed_width = 44
-        self.score_panel_collapsed = False
-        self.score_toggle_rect = QRect()
+        self.sidebar_width = 320
+        self.sidebar_min_width = 250
+        self.sidebar_max_width = 560
+        self.sidebar_resize_margin = 8
+        self.sidebar_resizing = False
+        self.top_panel_height = 70
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
@@ -151,7 +147,6 @@ class GameWidget(QWidget):
 
     def tick_time(self):
         self.elapsed_seconds += 1
-        self.state_changed.emit()
         self.update()
 
     def format_time(self):
@@ -178,30 +173,27 @@ class GameWidget(QWidget):
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         
-        # Ana arka plan
-        game_rect = QRect(0, 0, self.width(), self.height())
+        # Arka plan (sağ taraf) - beyaz oyun alanı
+        bg_x = self.sidebar_width
+        game_rect = QRect(bg_x, 0, self.width() - bg_x, self.height())
         painter.fillRect(game_rect, QColor("#ffffff"))
         painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawRect(game_rect.adjusted(0, 0, -1, -1))
-
-        # Üst bilgi/menu paneli
-        self.draw_top_panel(painter, 0)
-
-        # Sağ skor paneli (menü altında)
-        score_w = self.score_panel_collapsed_width if self.score_panel_collapsed else self.score_panel_expanded_width
-        score_x = self.width() - score_w
-        score_y = self.top_panel_height
-        score_h = self.height() - self.top_panel_height
-        self.draw_modern_sidebar(painter, score_x, score_y, score_w, score_h)
+        # Skor tabelası ile bilgi bölümü arasında çizgi istemediğin için
+        # yalnızca sağ ve alt sınırı çiziyoruz.
+        painter.drawLine(game_rect.right(), game_rect.top(), game_rect.right(), game_rect.bottom())
+        painter.drawLine(game_rect.left(), game_rect.bottom(), game_rect.right(), game_rect.bottom())
         
-        # Kartlar (sol/orta alan) - ayraçlara eşit dış boşlukla yerleşim
+        # SOL PANEL - Modern Office Style
+        self.draw_modern_sidebar(painter, bg_x)
+        
+        # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
         cols = self.cols
         rows = self.rows
         outer_padding = 14
         card_gap = 6
-        cards_area_x = outer_padding
+        cards_area_x = bg_x + outer_padding
         cards_area_y = self.top_panel_height + outer_padding
-        cards_area_w = (score_x - outer_padding) - cards_area_x
+        cards_area_w = (self.width() - bg_x) - (outer_padding * 2)
         cards_area_h = (self.height() - self.top_panel_height) - (outer_padding * 2)
         card_w = max(10, (cards_area_w - (card_gap * (cols - 1))) // cols)
         card_h = max(10, (cards_area_h - (card_gap * (rows - 1))) // rows)
@@ -233,73 +225,79 @@ class GameWidget(QWidget):
                 painter.setPen(Qt.white if card.is_flipped or card.is_matched else QColor(100, 100, 100))
                 painter.drawText(card.rect, Qt.AlignCenter, card.icon)
         
-    def draw_modern_sidebar(self, painter, x, y, width, height):
+        # Üst Panel - Modern Office Style
+        self.draw_top_panel(painter, bg_x)
+
+    def draw_modern_sidebar(self, painter, width):
         """Modern Office-style sidebar"""
-        painter.fillRect(x, y, width, height, QColor("#f3f3f3"))
+        # Arka plan - skor tabelası
+        painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
+        
+        # Sağ sınır: bilgi bölümünde görünmesin diye 70px sonrası çizilir
         painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawRect(QRect(x, y, width - 1, height - 1))
-
-        # Aç/Kapa başlığı
-        self.score_toggle_rect = QRect(x + 1, y + 1, width - 2, 34)
-        painter.fillRect(self.score_toggle_rect, QColor("#ececec"))
-        painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(self.score_toggle_rect.left(), self.score_toggle_rect.bottom(),
-                         self.score_toggle_rect.right(), self.score_toggle_rect.bottom())
+        painter.drawLine(width - 1, 70, width - 1, self.height())
+        
+        # Başlık
         painter.setPen(QColor(25, 103, 210))
-        painter.setFont(QFont("Segoe UI", 10, QFont.Bold))
-        marker = "▸" if self.score_panel_collapsed else "▾"
-        painter.drawText(self.score_toggle_rect.adjusted(8, 0, -8, 0), Qt.AlignVCenter, f"{marker} Sıralama ({self.grid_size})")
-
-        if self.score_panel_collapsed:
-            return
-
+        painter.setFont(QFont("Segoe UI", 16, QFont.Bold))
+        painter.drawText(15, 35, f"🏆 Sıralama ({self.grid_size})")
+        
+        # Alt çizgi
+        painter.setPen(QPen(QColor("#cccccc"), 1))
+        painter.drawLine(15, 45, width - 15, 45)
+        
         # Başlık satırı
         painter.setPen(QColor(100, 100, 100))
         painter.setFont(QFont("Segoe UI", 9, QFont.Normal))
-        col_rank = x + 10
-        col_name = x + 46
-        col_moves = x + 190
-        col_time = x + 240
-        header_y = y + 56
-        painter.drawText(col_rank, header_y, "Sıra")
-        painter.drawText(col_name, header_y, "Oyuncu")
-        painter.drawText(col_moves, header_y, "Adım")
-        painter.drawText(col_time, header_y, "Süre")
+        moves_col_x = 190
+        duration_col_x = 240
+        painter.drawText(15, 65, "Sıra")
+        painter.drawText(50, 65, "Oyuncu")
+        painter.drawText(moves_col_x, 65, "Adım")
+        painter.drawText(duration_col_x, 65, "Süre")
         
         # Skor listesi - grid boyutuna göre
         scores = self.score_manager.get_top_scores(self.grid_size)
-        y_pos = y + 76
+        y_pos = 85
         
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
         
         for rank, entry in enumerate(scores[:10], 1):
             # Arka plan - hover
             if rank % 2 == 0:
-                painter.fillRect(x + 8, y_pos - 12, width - 16, 20, QColor("#f3f3f3"))
+                painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f3f3f3"))
             
             # Medal resimleri
             medals = ['🥇', '🥈', '🥉']
             medal = medals[rank - 1] if rank <= 3 else f"{rank}."
             
             painter.setPen(QColor(33, 33, 33))
-            painter.drawText(col_rank, y_pos, medal)
+            painter.drawText(15, y_pos, medal)
             
             # Oyuncu adı (kısalt)
             name = entry['name'][:15]
-            painter.drawText(col_name, y_pos, name)
+            painter.drawText(50, y_pos, name)
             
             # Adım sayısı
             painter.setPen(QColor(25, 103, 210))
             painter.setFont(QFont("Segoe UI", 10, QFont.Bold))
-            painter.drawText(col_moves, y_pos, str(entry.get('moves', '-')))
+            painter.drawText(moves_col_x, y_pos, str(entry.get('moves', '-')))
             painter.setPen(QColor(120, 120, 120))
             painter.setFont(QFont("Segoe UI", 9, QFont.Normal))
-            painter.drawText(col_time, y_pos, f"{entry.get('duration', 0)}sn")
+            painter.drawText(duration_col_x, y_pos, f"{entry.get('duration', 0)}sn")
             
             painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
             painter.setPen(QColor(33, 33, 33))
             
             y_pos += 25
+
+    def clamp_sidebar_width(self, desired_width):
+        max_width = min(self.sidebar_max_width, self.width() - 360)
+        max_width = max(max_width, self.sidebar_min_width)
+        return max(self.sidebar_min_width, min(desired_width, max_width))
+
+    def is_on_sidebar_edge(self, pos):
+        return abs(pos.x() - self.sidebar_width) <= self.sidebar_resize_margin
 
     def draw_top_panel(self, painter, start_x):
         """Modern Office-style üst panel"""
@@ -311,14 +309,73 @@ class GameWidget(QWidget):
         # Alt sınır
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawLine(start_x, panel_height - 1, self.width(), panel_height - 1)
+        
+        # Oyuncu adı - başlık
+        painter.setPen(QColor(25, 103, 210))
+        painter.setFont(QFont("Segoe UI", 11, QFont.Bold))
+        painter.drawText(start_x + 15, 20, f"👤 {self.player_name}")
+        
+        # Adımlar - sayı
+        painter.setPen(QColor(100, 100, 100))
+        painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
+        painter.drawText(start_x + 15, 45, f"Adımlar:")
+        
+        painter.setPen(QColor(25, 103, 210))
+        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.drawText(start_x + 100, 45, str(self.moves))
+        
+        # Eşleştirmeler - sayı
+        painter.setPen(QColor(100, 100, 100))
+        painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
+        painter.drawText(start_x + 200, 45, f"Eşleştirmeler:")
+        
+        painter.setPen(QColor(25, 103, 210))
+        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.drawText(start_x + 330, 45, f"{self.matched_pairs}/{self.total_pairs}")
+
+        # Süre - canlı güncellenir
+        painter.setPen(QColor(100, 100, 100))
+        painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
+        painter.drawText(start_x + 430, 45, "Süre:")
+        painter.setPen(QColor(25, 103, 210))
+        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.drawText(start_x + 485, 45, self.format_time())
+        
+        # Reset Butonu - Modern Office Style
+        self.draw_reset_button(painter)
+
+    def draw_reset_button(self, painter):
+        """Modern Office-style reset butonu"""
+        self.reset_btn_rect = QRect(self.width() - 180, 12, 160, 46)
+        
+        # Gölge
+        painter.fillRect(self.reset_btn_rect.adjusted(0, 2, 2, 2), QColor(0, 0, 0, 30))
+        
+        # Arka plan - hover kontrolü
+        if self.reset_btn_hover:
+            painter.fillRect(self.reset_btn_rect, QColor(41, 128, 185))  # Daha koyu mavi
+        else:
+            painter.fillRect(self.reset_btn_rect, QColor(52, 152, 219))  # Mavi
+        
+        # Border
+        painter.setPen(QPen(QColor(25, 103, 210), 1))
+        painter.drawRoundedRect(self.reset_btn_rect, 4, 4)
+        
+        # Yazı
+        painter.setPen(Qt.white)
+        painter.setFont(QFont("Segoe UI", 11, QFont.Bold))
+        painter.drawText(self.reset_btn_rect, Qt.AlignCenter, "↻  Yeniden Başlat")
 
     def mousePressEvent(self, event):
-        if self.score_toggle_rect.contains(event.pos()):
-            self.score_panel_collapsed = not self.score_panel_collapsed
-            self.state_changed.emit()
-            self.update()
+        if event.button() == Qt.LeftButton and self.is_on_sidebar_edge(event.pos()):
+            self.sidebar_resizing = True
+            self.setCursor(Qt.SizeHorCursor)
             return
 
+        if self.reset_btn_rect.contains(event.pos()):
+            self.reset_game()
+            return
+        
         if not self.game_active or (self.first_flipped != -1 and self.second_flipped != -1):
             return
         
@@ -334,7 +391,6 @@ class GameWidget(QWidget):
                     if not self.timer_running:
                         self.game_timer.start()
                         self.timer_running = True
-                    self.state_changed.emit()
                     self.game_active = False
                     self.check_timer.start(1000)
                 
@@ -343,10 +399,26 @@ class GameWidget(QWidget):
 
     def mouseMoveEvent(self, event):
         """Hover efekti"""
-        self.setCursor(Qt.ArrowCursor)
+        if self.sidebar_resizing:
+            self.sidebar_width = self.clamp_sidebar_width(event.pos().x())
+            self.update()
+            return
+
+        if self.is_on_sidebar_edge(event.pos()):
+            self.setCursor(Qt.SizeHorCursor)
+            return
+
+        hover = self.reset_btn_rect.contains(event.pos())
+        if hover != self.reset_btn_hover:
+            self.reset_btn_hover = hover
+            self.setCursor(Qt.PointingHandCursor if hover else Qt.ArrowCursor)
+            self.update()
+        elif not hover:
+            self.setCursor(Qt.ArrowCursor)
 
     def mouseReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton and self.sidebar_resizing:
+            self.sidebar_resizing = False
             self.setCursor(Qt.ArrowCursor)
 
     def check_match(self):
@@ -373,7 +445,7 @@ class GameWidget(QWidget):
         self.first_flipped = -1
         self.second_flipped = -1
         self.game_active = True
-        self.state_changed.emit()
+        
         self.update()
 
     def save_and_show_result(self):
@@ -414,7 +486,6 @@ Tebrikler {self.player_name}!
         self.second_flipped = -1
         
         self.initialize_cards()
-        self.state_changed.emit()
         self.update()
 
 class MainWindow(QMainWindow):
@@ -433,19 +504,12 @@ class MainWindow(QMainWindow):
         self.setGeometry(50, 50, 1400, 900)
         self.setStyleSheet("""
             QMainWindow { background-color: #f5f5f5; }
-            QTabWidget::pane { border: 1px solid #cccccc; background: #f3f3f3; }
-            QTabBar::tab { background: #eaeaea; border: 1px solid #cccccc; padding: 4px 10px; }
-            QTabBar::tab:selected { background: #f3f3f3; }
-            QToolButton {
-                background: #f3f3f3;
-                border: 1px solid #cccccc;
-                padding: 4px 8px;
-                min-width: 88px;
-                min-height: 24px;
-            }
-            QToolButton:hover { background: #e9e9e9; }
-            QComboBox { background: #f3f3f3; border: 1px solid #cccccc; min-height: 24px; padding: 2px 6px; }
-            QLabel { color: #333333; }
+            QMenuBar { background-color: #f3f3f3; border-bottom: 1px solid #cccccc; }
+            QMenuBar::item { padding: 6px 10px; border-radius: 4px; }
+            QMenuBar::item:selected { background: #e6e6e6; }
+            QMenu { background-color: #f3f3f3; border: 1px solid #cccccc; }
+            QMenu::item { padding: 6px 18px; }
+            QMenu::item:selected { background-color: #e6e6e6; color: #222222; }
         """)
         
         # Icon ayarla (kod icinde)
@@ -458,258 +522,74 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
         self.score_manager = ScoreManager()
-
+        
+        # Menü çubuğu oluştur
+        self.create_menu_bar()
+        
         # Oyun widget'ı
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
+        self.game_widget.setParent(self)
         self.setCentralWidget(self.game_widget)
-
-        # Şerit menü bilgi bölümüne gömülür
-        self.ribbon = self.create_ribbon()
-        self.ribbon.setParent(self.game_widget)
-        self.ribbon.raise_()
-        self.position_info_ribbon()
-        self.game_widget.state_changed.connect(self.refresh_info_tab)
-        self.refresh_info_tab()
-
-        # Kısayollar korunur
-        self.shortcuts = [
-            QAction("Yeni Oyun", self, shortcut="Ctrl+N", triggered=self.new_game),
-            QAction("Yeniden Başlat", self, shortcut="Ctrl+R", triggered=self.restart_game),
-            QAction("Yardım", self, shortcut="F1", triggered=self.show_help),
-            QAction("Çıkış", self, shortcut="Ctrl+Q", triggered=self.close),
-        ]
-        for shortcut_action in self.shortcuts:
-            self.addAction(shortcut_action)
-
-    def create_ribbon(self):
-        """OnlyOffice tarzı ribbon menu"""
-        ribbon = QTabWidget(self)
-        ribbon.setDocumentMode(True)
-        ribbon.setStyleSheet("""
-            QTabWidget::pane { border: none; }
-            QTabBar::tab { 
-                padding: 6px 16px; 
-                font-size: 12px;
-                font-weight: 600;
-            }
-            QTabBar::tab:selected { 
-                background: #4472C4;
-                color: white;
-            }
-            QTabBar::tab:!selected {
-                background: #ccc;
-                color: #333;
-            }
-            QLabel {
-                font-size: 10px;
-                font-weight: normal;
-                color: white;
-            }
-            QToolButton {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-        """)
-
-        # ===== FILE TAB =====
-        file_tab = QWidget()
-        file_layout = QHBoxLayout(file_tab)
-        file_layout.setContentsMargins(2, 2, 2, 2)
-        file_layout.setSpacing(6)
+    
+    def create_menu_bar(self):
+        """Menü çubuğu oluştur"""
+        menubar = self.menuBar()
         
-        # New grup - basliksiz kutu
-        new_widget = QWidget()
-        new_widget.setStyleSheet("border: 1px solid #999;")
-        new_layout = QVBoxLayout(new_widget)
-        new_layout.setContentsMargins(2, 2, 2, 2)
-        new_layout.setSpacing(2)
+        # Oyun menüsü
+        game_menu = menubar.addMenu("🎮 Oyun")
         
-        for icon, label, handler in [
-            ("+", "Yeni Oyun", self.new_game),
-            ("R", "Yeniden", self.restart_game),
-        ]:
-            btn = QToolButton()
-            btn.setText(f"{icon} {label}")
-            btn.clicked.connect(handler)
-            new_layout.addWidget(btn)
+        # Yeni oyun
+        new_action = QAction("🆕 Yeni Oyun", self)
+        new_action.setShortcut("Ctrl+N")
+        new_action.triggered.connect(self.new_game)
+        game_menu.addAction(new_action)
         
-        new_layout.addStretch()
-        file_layout.addWidget(new_widget, 1)
+        # Yeniden başlat
+        restart_action = QAction("🔄 Yeniden Başlat", self)
+        restart_action.setShortcut("Ctrl+R")
+        restart_action.triggered.connect(self.restart_game)
+        game_menu.addAction(restart_action)
         
-        # Save grup
-        save_widget = QWidget()
-        save_widget.setStyleSheet("border: 1px solid #999;")
-        save_layout = QVBoxLayout(save_widget)
-        save_layout.setContentsMargins(2, 2, 2, 2)
-        save_layout.setSpacing(2)
+        game_menu.addSeparator()
         
-        btn = QToolButton()
-        btn.setText("Sifirla")
+        # Kart adedi alt menüsü
+        grid_menu = QMenu("📊 Kart Adedi", self)
         
-        btn.clicked.connect(self.reset_scores)
-        save_layout.addWidget(btn)
+        for label, size in [("4x4 (16 kart)", "4x4"), ("4x6 (24 kart)", "4x6"),
+                          ("5x6 (30 kart)", "5x6"), ("4x8 (32 kart)", "4x8"),
+                          ("6x8 (48 kart)", "6x8")]:
+            action = QAction(label, self)
+            action.triggered.connect(lambda checked, s=size: self.change_grid_size(s))
+            grid_menu.addAction(action)
         
-        save_layout.addStretch()
-        file_layout.addWidget(save_widget, 1)
+        game_menu.addMenu(grid_menu)
         
-        file_layout.addStretch(1)
-        ribbon.addTab(file_tab, "File")
-
-        # ===== HOME TAB =====
-        home_tab = QWidget()
-        home_layout = QHBoxLayout(home_tab)
-        home_layout.setContentsMargins(2, 2, 2, 2)
-        home_layout.setSpacing(6)
+        game_menu.addSeparator()
         
-        # Game grup
-        game_widget = QWidget()
-        game_widget.setStyleSheet("border: 1px solid #999;")
-        game_layout = QVBoxLayout(game_widget)
-        game_layout.setContentsMargins(2, 2, 2, 2)
-        game_layout.setSpacing(2)
+        reset_action = QAction("🗑 Skorları Sıfırla", self)
+        reset_action.triggered.connect(self.reset_scores)
+        game_menu.addAction(reset_action)
         
-        game_label2 = QLabel("Kart:")
-        game_layout.addWidget(game_label2)
+        # Çıkış
+        exit_action = QAction("✖ Çıkış", self)
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.triggered.connect(self.close)
+        game_menu.addAction(exit_action)
         
-        self.grid_combo = QComboBox()
-        self.grid_combo.setMinimumHeight(24)
-        self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
-        grid_map = {'4x4': '4x4', '4x6': '4x6', '5x6': '5x6', '4x8': '4x8', '6x8': '6x8'}
-        self.grid_combo.setCurrentText(self.grid_size)
-        self.grid_combo.currentTextChanged.connect(lambda t: self.change_grid_size(grid_map.get(t, t)))
-        game_layout.addWidget(self.grid_combo)
+        # Oyuncu menüsü
+        player_menu = menubar.addMenu("👤 Oyuncu")
         
-        game_layout.addStretch()
-        home_layout.addWidget(game_widget, 1)
+        name_action = QAction("📝 İsim Değiştir", self)
+        name_action.triggered.connect(self.change_name)
+        player_menu.addAction(name_action)
         
-        # Actions grup
-        action_widget = QWidget()
-        action_widget.setStyleSheet("border: 1px solid #999;")
-        action_layout = QVBoxLayout(action_widget)
-        action_layout.setContentsMargins(2, 2, 2, 2)
-        action_layout.setSpacing(2)
         
-        for label, handler in [
-            ("Yeniden", self.restart_game),
-            ("Karistir", self.shuffle_cards),
-        ]:
-            btn = QToolButton()
-            btn.setText(label)
-            
-            btn.clicked.connect(handler)
-            action_layout.addWidget(btn)
+        help_menu = menubar.addMenu("❓ Yardım")
         
-        action_layout.addStretch()
-        home_layout.addWidget(action_widget, 1)
-        
-        home_layout.addStretch(1)
-        ribbon.addTab(home_tab, "Home")
-
-        # ===== PLAYER TAB =====
-        player_tab = QWidget()
-        player_layout = QHBoxLayout(player_tab)
-        player_layout.setContentsMargins(2, 2, 2, 2)
-        player_layout.setSpacing(6)
-        
-        player_widget = QWidget()
-        player_widget.setStyleSheet("border: 1px solid #999;")
-        player_layout2 = QVBoxLayout(player_widget)
-        player_layout2.setContentsMargins(2, 2, 2, 2)
-        player_layout2.setSpacing(2)
-        
-        self.player_name_label = QLabel(self.player_name)
-        player_layout2.addWidget(self.player_name_label)
-        
-        btn = QToolButton()
-        btn.setText("Degistir")
-        
-        btn.clicked.connect(self.change_name)
-        player_layout2.addWidget(btn)
-        
-        player_layout2.addStretch()
-        player_layout.addWidget(player_widget, 1)
-        
-        player_layout.addStretch(1)
-        ribbon.addTab(player_tab, "Player")
-
-        # ===== HELP TAB =====
-        help_tab = QWidget()
-        help_layout = QHBoxLayout(help_tab)
-        help_layout.setContentsMargins(2, 2, 2, 2)
-        help_layout.setSpacing(6)
-        
-        # Help grup
-        help_widget = QWidget()
-        help_widget.setStyleSheet("border: 1px solid #999;")
-        help_layout2 = QVBoxLayout(help_widget)
-        help_layout2.setContentsMargins(2, 2, 2, 2)
-        help_layout2.setSpacing(2)
-        
-        for label, handler in [
-            ("Yardim", self.show_help),
-            ("Hakkinda", self.show_about),
-        ]:
-            btn = QToolButton()
-            btn.setText(label)
-            
-            btn.clicked.connect(handler)
-            help_layout2.addWidget(btn)
-        
-        help_layout2.addStretch()
-        help_layout.addWidget(help_widget, 1)
-        
-        # Info grup
-        info_widget = QWidget()
-        info_widget.setStyleSheet("border: 1px solid #999;")
-        info_layout = QVBoxLayout(info_widget)
-        info_layout.setContentsMargins(2, 2, 2, 2)
-        info_layout.setSpacing(2)
-        
-        self.info_avatar_name = QLabel(self.player_name)
-        info_layout.addWidget(self.info_avatar_name)
-        
-        self.info_moves = QLabel("Adim: 0")
-        info_layout.addWidget(self.info_moves)
-        
-        self.info_matches = QLabel("Esle: 0/0")
-        info_layout.addWidget(self.info_matches)
-        
-        self.info_time = QLabel("Sure: 0")
-        info_layout.addWidget(self.info_time)
-        
-        info_layout.addStretch()
-        help_layout.addWidget(info_widget, 1)
-        
-        help_layout.addStretch(1)
-        ribbon.addTab(help_tab, "Help")
-        
-        return ribbon
-
-    def position_info_ribbon(self):
-        if not hasattr(self, "game_widget") or not hasattr(self, "ribbon"):
-            return
-        gw = self.game_widget
-        panel_h = gw.top_panel_height
-        x = 4
-        y = 4
-        w = gw.width() - 8
-        h = panel_h - 8
-        self.ribbon.setGeometry(x, y, w, h)
-        self.ribbon.show()
-
-    def refresh_info_tab(self):
-        if not hasattr(self, "game_widget"):
-            return
-        gw = self.game_widget
-        if hasattr(self, "info_avatar_name") and self.info_avatar_name:
-            self.info_avatar_name.setText(f"Player: {self.player_name}")
-            self.info_moves.setText(f"Adımlar: {gw.moves}")
-            self.info_matches.setText(f"Eşleştirme: {gw.matched_pairs}/{gw.total_pairs}")
-            self.info_time.setText(f"Süre: {gw.format_time()}")
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.position_info_ribbon()
+        help_action = QAction("📖 Nasıl Oynanır", self)
+        help_action.setShortcut("F1")
+        help_action.triggered.connect(self.show_help)
+        help_menu.addAction(help_action)
     
     def new_game(self):
         """Yeni oyun"""
@@ -720,19 +600,8 @@ class MainWindow(QMainWindow):
     
     def restart_game(self):
         """Oyunu yeniden başlat"""
-        old_widget = self.game_widget
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
         self.setCentralWidget(self.game_widget)
-        old_widget.deleteLater()
-        self.ribbon.setParent(self.game_widget)
-        self.ribbon.raise_()
-        self.game_widget.state_changed.connect(self.refresh_info_tab)
-        if hasattr(self, "grid_combo"):
-            self.grid_combo.blockSignals(True)
-            self.grid_combo.setCurrentText(self.grid_size)
-            self.grid_combo.blockSignals(False)
-        self.position_info_ribbon()
-        self.refresh_info_tab()
         self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
     
     def reset_scores(self):
@@ -752,7 +621,7 @@ class MainWindow(QMainWindow):
     
     def show_help(self):
         """Yardım göster"""
-        help_text = """Bellek Oyunu v2.0
+        help_text = """🧠 Bellek Oyunu v2.0
 
 Bir kart eşleştirme oyunu.
 
@@ -765,49 +634,21 @@ Nasıl Oynanır:
 Platform: Linux KDE uyumlu"""
 
         QMessageBox.information(self, "Yardım", help_text)
-
-    def show_about(self):
-        """Hakkında göster"""
-        QMessageBox.about(self, "Bellek Oyunu Hakkinda",
-            "Bellek Oyunu v2.0\n\n"
-            "Kart eşleştirme oyunu\n\n"
-            "© 2024 Bellek Oyunu\n"
-            "Tüm hakları saklıdır.")
-
-    def shuffle_cards(self):
-        """Kartları karıştır"""
-        if self.game_widget:
-            self.game_widget.initialize_cards()
-            self.game_widget.first_flipped = -1
-            self.game_widget.second_flipped = -1
-            self.game_widget.moves = 0
-            self.game_widget.matched_pairs = 0
-            self.game_widget.elapsed_seconds = 0
-            self.game_widget.game_active = True
-            self.game_widget.game_finished = False
-            if not self.game_widget.timer_running:
-                self.game_widget.game_timer.start()
-                self.game_widget.timer_running = True
-            self.refresh_info_tab()
-            self.game_widget.update()
     
     def change_grid_size(self, grid_size):
         """Grid boyutunu değiştir"""
-        if grid_size == self.grid_size:
-            return
         self.grid_size = grid_size
         self.restart_game()
     
     def change_name(self):
         """İsim değiştir"""
-        name, ok = QInputDialog.getText(self, "Oyuncu", "Yeni isminiz:", text=self.player_name)
+        name, ok = QInputDialog.getText(self, "👤 Oyuncu", "Yeni isminiz:", text=self.player_name)
         if ok and name.strip():
             self.player_name = name.strip()
             self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
             if hasattr(self, 'game_widget') and self.game_widget:
                 self.game_widget.player_name = self.player_name
                 self.game_widget.update()
-            self.refresh_info_tab()
     
     def get_player_name(self):
         """Oyuncu adını sor"""
