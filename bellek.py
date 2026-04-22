@@ -664,11 +664,13 @@ class MainWindow(QMainWindow):
                 background: white;
                 border: 1px solid #cccccc;
                 border-radius: 8px;
+                padding-top: 0px;
             }
         """)
         if widget:
             v_layout = QVBoxLayout(box)
-            v_layout.setContentsMargins(8, 4, 8, 4)
+            v_layout.setContentsMargins(8, 0, 8, 4)
+            v_layout.setSpacing(0)
             # Handle both widgets and layouts
             if isinstance(widget, QLayout):
                 content = QWidget()
@@ -689,7 +691,8 @@ class MainWindow(QMainWindow):
             }
         """)
         v_layout = QVBoxLayout(box)
-        v_layout.setContentsMargins(8, 4, 8, 4)
+        v_layout.setContentsMargins(8, 0, 8, 4)
+        v_layout.setSpacing(0)
         content = QWidget()
         content.setLayout(layout)
         v_layout.addWidget(content)
