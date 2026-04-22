@@ -638,7 +638,8 @@ class MainWindow(QMainWindow):
         # Ana layout - her baslik kutunun ustunde
         layout = QGridLayout(ribbon)
         layout.setContentsMargins(8, 4, 8, 4)
-        layout.setSpacing(4, 8)
+        layout.setHorizontalSpacing(8)
+        layout.setVerticalSpacing(8)
         
         # Her baslik ilgili kutunun ustunde
         layout.addWidget(QLabel("Oyun"), 0, 0)
