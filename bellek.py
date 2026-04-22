@@ -638,14 +638,14 @@ class MainWindow(QMainWindow):
         # Ana layout - her baslik kutunun ustunde
         layout = QGridLayout(ribbon)
         layout.setContentsMargins(8, 4, 8, 4)
-        layout.setHorizontalSpacing(8)
-        layout.setVerticalSpacing(8)
+        layout.setHorizontalSpacing(4)
+        layout.setVerticalSpacing(2)
         
         # Her baslik ilgili kutunun ustunde
         layout.addWidget(QLabel("Oyun"), 0, 0)
         layout.addWidget(self.create_kutu(btn_layout), 1, 0)
         
-        layout.addWidget(QLabel("Kart Adedi"), 0, 1)
+        layout.addWidget(QLabel("Kart"), 0, 1)
         layout.addWidget(self.create_kutu(self.grid_combo), 1, 1)
         
         layout.addWidget(QLabel("Oyuncu"), 0, 2)
