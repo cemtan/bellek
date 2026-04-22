@@ -87,8 +87,6 @@ class ScoreManager:
 
 
 class GameWidget(QWidget):
-    # Signal for state changes
-    state_changed = pyqtSignal()
     
     def __init__(self, player_name, score_manager, grid_size='6x8'):
         super().__init__()
@@ -130,7 +128,7 @@ class GameWidget(QWidget):
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 8
         self.sidebar_resizing = False
-        self.top_panel_height = 250
+        self.top_panel_height = 70
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
@@ -154,7 +152,7 @@ class GameWidget(QWidget):
 
     def tick_time(self):
         self.elapsed_seconds += 1
-        self.state_changed.emit()
+        
         self.update()
 
     def format_time(self):
@@ -396,7 +394,7 @@ class GameWidget(QWidget):
                 elif self.second_flipped == -1:
                     self.second_flipped = i
                     self.moves += 1
-                    self.state_changed.emit()
+                    
                     if not self.timer_running:
                         self.game_timer.start()
                         self.timer_running = True
@@ -440,7 +438,7 @@ class GameWidget(QWidget):
             first_card.is_matched = True
             second_card.is_matched = True
             self.matched_pairs += 1
-            self.state_changed.emit()
+            
             
             if self.matched_pairs == self.total_pairs:
                 self.game_active = False
@@ -540,84 +538,6 @@ class MainWindow(QMainWindow):
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
         self.game_widget.setParent(self)
         self.setCentralWidget(self.game_widget)
-        
-        # Ribbon (skor tablosu ile)
-        self.ribbon = self.create_ribbon()
-        self.ribbon.setParent(self.game_widget)
-        self.ribbon.raise_()
-        self.position_info_ribbon()
-        self.game_widget.state_changed.connect(self.refresh_info_tab)
-        self.refresh_info_tab()
-
-    def create_ribbon(self):
-        """OnlyOffice tarzı ribbon - skor tablosu dahil"""
-        ribbon = QTabWidget(self)
-        ribbon.setDocumentMode(True)
-        
-        # ===== SCORES TAB =====
-        scores_tab = QWidget()
-        scores_layout = QVBoxLayout(scores_tab)
-        scores_layout.setContentsMargins(4, 4, 4, 4)
-        
-        # Toggle button
-        self.scores_toggle_btn = QPushButton("▼ Skorlar (" + self.grid_size + ")")
-        self.scores_toggle_btn.setCheckable(True)
-        self.scores_toggle_btn.setChecked(True)
-        self.scores_toggle_btn.clicked.connect(self.toggle_scores_panel)
-        scores_layout.addWidget(self.scores_toggle_btn)
-        
-        # Scores table
-        self.scores_table = QTableWidget()
-        self.scores_table.setColumnCount(4)
-        self.scores_table.setHorizontalHeaderLabels(["Sira", "Oyuncu", "Adim", "Sure"])
-        self.scores_table.setMinimumHeight(200)
-        self.update_scores_table()
-        scores_layout.addWidget(self.scores_table)
-        
-        ribbon.addTab(scores_tab, "Skorlar")
-        
-        return ribbon
-
-    def toggle_scores_panel(self, checked):
-        """Skor panelini aç/kapa"""
-        if hasattr(self, 'scores_table'):
-            self.scores_table.setVisible(checked)
-        if hasattr(self, 'scores_toggle_btn'):
-            self.scores_toggle_btn.setText("▶ Skorlar (" + self.grid_size + ")" if not checked else "▼ Skorlar (" + self.grid_size + ")")
-
-    def update_scores_table(self):
-        """Skor tablosunu güncelle"""
-        if not hasattr(self, 'scores_table'):
-            return
-        scores = self.score_manager.get_top_scores(self.grid_size)
-        self.scores_table.setRowCount(len(scores))
-        for i, entry in enumerate(scores):
-            self.scores_table.setItem(i, 0, QTableWidgetItem(str(i+1)))
-            self.scores_table.setItem(i, 1, QTableWidgetItem(entry.get('name', '')))
-            self.scores_table.setItem(i, 2, QTableWidgetItem(str(entry.get('moves', 0))))
-            self.scores_table.setItem(i, 3, QTableWidgetItem(str(entry.get('duration', 0))))
-
-    def position_info_ribbon(self):
-        if not hasattr(self, "game_widget") or not hasattr(self, "ribbon"):
-            return
-        gw = self.game_widget
-        panel_h = gw.top_panel_height
-        x = 4
-        y = 4
-        w = gw.width() - 8
-        h = panel_h - 8
-        self.ribbon.setGeometry(x, y, w, h)
-        self.ribbon.show()
-
-    def refresh_info_tab(self):
-        if not hasattr(self, "game_widget"):
-            return
-        gw = self.game_widget
-        if hasattr(self, "info_avatar_name") and self.info_avatar_name:
-            self.info_avatar_name.setText(f"Player: {self.player_name}")
-            self.info_moves.setText(f"Adimlar: {gw.moves}")
-            self.info_matches.setText(f"Esleme: {gw.matched_pairs}/{gw.total_pairs}")
-            self.info_time.setText(f"Sure: {gw.format_time()}")
     
     def create_menu_bar(self):
         """Menü çubuğu oluştur"""
