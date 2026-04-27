@@ -16,6 +16,18 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
+import base64
+
+
+def load_app_icon():
+    """Load app icon from embedded base64."""
+    # Read from self (bellek.png) in same directory as this file
+    bellek_py = Path(__file__).resolve()
+    icon_path = bellek_py.parent / "bellek.png"
+    if icon_path.exists():
+        pixmap = QPixmap(str(icon_path))
+        return QIcon(pixmap)
+    return QIcon()
 
 
 # ============== RIBBON SINIFI ==============
@@ -542,6 +554,7 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
         self.setGeometry(50, 50, 1400, 900)
+        self.setWindowIcon(load_app_icon())
         self.setStyleSheet("""
             QMainWindow { background-color: #f5f5f5; }
             QMenuBar { background-color: #f3f3f3; border-bottom: 1px solid #cccccc; }
