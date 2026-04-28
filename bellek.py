@@ -58,7 +58,19 @@ class RibbonBar(QWidget):
                 padding: 4px 8px;
                 background: white;
             }
+            QLineEdit:hover, QComboBox:hover {
+                background: #eaeaea;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 16px;
+            }
+            QComboBox::down-arrow {
+                border: none;
+            }
             QLabel { color: #333333; }
+            #toolbar_btn { background: transparent; }
+            #toolbar_btn:hover { background: #eaeaea; }
         """)
 
 
@@ -614,6 +626,7 @@ class MainWindow(QMainWindow):
         
         # Yeni Oyun (▶)
         item = QWidget()
+        item.setObjectName("toolbar_btn")
         v = QVBoxLayout(item)
         v.setSpacing(0)
         lbl = QLabel("▶")
@@ -629,6 +642,7 @@ class MainWindow(QMainWindow):
         
         # Yeniden (↻)
         item = QWidget()
+        item.setObjectName("toolbar_btn")
         v = QVBoxLayout(item)
         v.setSpacing(0)
         lbl = QLabel("↻")
@@ -644,6 +658,7 @@ class MainWindow(QMainWindow):
         
         # Skorları Sıfırla (✕)
         item = QWidget()
+        item.setObjectName("toolbar_btn")
         v = QVBoxLayout(item)
         v.setSpacing(0)
         lbl = QLabel("✕")
