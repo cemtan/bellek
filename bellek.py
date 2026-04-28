@@ -70,9 +70,14 @@ class RibbonBar(QWidget):
                 border: none;
             }
             QComboBox QAbstractItemView {
-                background: #eaeaea;
-                selection-background-color: #eaeaea;
+                background: white;
                 border: 1px solid #cccccc;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background: #eaeaea;
+            }
+            QComboBox QAbstractItemView::item:hover {
+                background: #eaeaea;
             }
             QLabel { color: #333333; }
             #toolbar_btn { background: white; }
