@@ -72,6 +72,7 @@ class RibbonBar(QWidget):
             QComboBox QAbstractItemView {
                 background: white;
                 border: 1px solid #cccccc;
+                color: black;
             }
             QComboBox QAbstractItemView::item:selected {
                 background: #eaeaea;
