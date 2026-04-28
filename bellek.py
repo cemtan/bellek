@@ -40,7 +40,7 @@ class RibbonBar(QWidget):
         self.setStyleSheet("""
             QWidget { background-color: white; }
             QFrame#box {
-                background: white;
+                background: #eaeaea;
                 border: 1px solid #cccccc;
                 border-radius: 8px;
             }
@@ -63,13 +63,19 @@ class RibbonBar(QWidget):
             }
             QComboBox::drop-down {
                 border: none;
+                background: transparent;
                 width: 16px;
             }
             QComboBox::down-arrow {
                 border: none;
             }
+            QComboBox QAbstractItemView {
+                background: #eaeaea;
+                selection-background-color: #eaeaea;
+                border: 1px solid #cccccc;
+            }
             QLabel { color: #333333; }
-            #toolbar_btn { background: transparent; }
+            #toolbar_btn { background: white; }
             #toolbar_btn:hover { background: #eaeaea; }
         """)
 
