@@ -636,9 +636,9 @@ class MainWindow(QMainWindow):
         btn_layout.setContentsMargins(4, 4, 4, 4)
         
         # Yeni Oyun (▶)
-        item = QWidget()
-        item.setObjectName("toolbar_btn")
-        v = QVBoxLayout(item)
+        btn1 = QWidget()
+        btn1.setObjectName("toolbar_btn")
+        v = QVBoxLayout(btn1)
         v.setSpacing(0)
         v.setContentsMargins(4, 2, 4, 2)
         lbl = QLabel("▶")
@@ -651,19 +651,19 @@ class MainWindow(QMainWindow):
         v.addWidget(txt)
         def on_new():
             self.new_game()
-        def enter(e):
-            item.setStyleSheet("background: #eaeaea; border-radius: 4px;")
-            item.update()
+        def enter1(e):
+            btn1.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            btn1.update()
             e.accept()
-        def leave(e):
-            item.setStyleSheet("background: white; border-radius: 4px;")
-            item.update()
+        def leave1(e):
+            btn1.setStyleSheet("background: white; border-radius: 4px;")
+            btn1.update()
             e.accept()
-        item.mousePressEvent = lambda e: on_new()
-        item.enterEvent = enter
-        item.leaveEvent = leave
-        item.setAttribute(Qt.WA_Hover)
-        btn_layout.addWidget(item)
+        btn1.mousePressEvent = lambda e: on_new()
+        btn1.enterEvent = enter1
+        btn1.leaveEvent = leave1
+        btn1.setAttribute(Qt.WA_Hover)
+        btn_layout.addWidget(btn1)
         
         # Yeniden (↻)
         item2 = QWidget()
@@ -726,9 +726,10 @@ class MainWindow(QMainWindow):
         btn_layout.addWidget(item3)
         
         # Kart Adedi dropdown (4.)
-        item = QWidget()
-        v = QVBoxLayout(item)
+        btn4 = QWidget()
+        v = QVBoxLayout(btn4)
         v.setSpacing(0)
+        v.setContentsMargins(4, 2, 4, 2)
         lbl = QLabel("▦")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setStyleSheet("font-size: 20px;")
@@ -738,7 +739,18 @@ class MainWindow(QMainWindow):
         self.grid_combo.currentTextChanged.connect(self.change_grid_size)
         v.addWidget(lbl)
         v.addWidget(self.grid_combo)
-        btn_layout.addWidget(item)
+        def enter4(e):
+            btn4.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            btn4.update()
+            e.accept()
+        def leave4(e):
+            btn4.setStyleSheet("background: white; border-radius: 4px;")
+            btn4.update()
+            e.accept()
+        btn4.enterEvent = enter4
+        btn4.leaveEvent = leave4
+        btn4.setAttribute(Qt.WA_Hover)
+        btn_layout.addWidget(btn4)
         
         # 3. Oyuncu
         player_layout = QHBoxLayout()
