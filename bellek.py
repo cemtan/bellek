@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QVBoxLayout, QGridLayout, QToolButton, QTabWidget, QLabel, QComboBox,
     QPushButton, QTableWidget, QTableWidgetItem, QMenu, QLineEdit, QFrame, QLayout
 )
-from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal
+from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal, QEvent
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
 import base64
 
@@ -640,6 +640,7 @@ class MainWindow(QMainWindow):
         item.setObjectName("toolbar_btn")
         v = QVBoxLayout(item)
         v.setSpacing(0)
+        v.setContentsMargins(4, 2, 4, 2)
         lbl = QLabel("▶")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setStyleSheet("font-size: 20px;")
@@ -648,7 +649,17 @@ class MainWindow(QMainWindow):
         txt.setStyleSheet("font-size: 10px;")
         v.addWidget(lbl)
         v.addWidget(txt)
-        item.mousePressEvent = lambda e: self.new_game()
+        def on_new():
+            self.new_game()
+        def enter(e):
+            item.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            e.accept()
+        def leave(e):
+            item.setStyleSheet("background: white; border-radius: 4px;")
+            e.accept()
+        item.mousePressEvent = lambda e: on_new()
+        item.enterEvent = enter
+        item.leaveEvent = leave
         btn_layout.addWidget(item)
         
         # Yeniden (↻)
@@ -656,6 +667,7 @@ class MainWindow(QMainWindow):
         item.setObjectName("toolbar_btn")
         v = QVBoxLayout(item)
         v.setSpacing(0)
+        v.setContentsMargins(4, 2, 4, 2)
         lbl = QLabel("↻")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setStyleSheet("font-size: 20px;")
@@ -664,7 +676,17 @@ class MainWindow(QMainWindow):
         txt.setStyleSheet("font-size: 10px;")
         v.addWidget(lbl)
         v.addWidget(txt)
-        item.mousePressEvent = lambda e: self.restart_game()
+        def on_restart():
+            self.restart_game()
+        def enter(e):
+            item.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            e.accept()
+        def leave(e):
+            item.setStyleSheet("background: white; border-radius: 4px;")
+            e.accept()
+        item.mousePressEvent = lambda e: on_restart()
+        item.enterEvent = enter
+        item.leaveEvent = leave
         btn_layout.addWidget(item)
         
         # Skorları Sıfırla (✕)
@@ -672,6 +694,7 @@ class MainWindow(QMainWindow):
         item.setObjectName("toolbar_btn")
         v = QVBoxLayout(item)
         v.setSpacing(0)
+        v.setContentsMargins(4, 2, 4, 2)
         lbl = QLabel("✕")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setStyleSheet("font-size: 20px;")
@@ -680,7 +703,17 @@ class MainWindow(QMainWindow):
         txt.setStyleSheet("font-size: 10px;")
         v.addWidget(lbl)
         v.addWidget(txt)
-        item.mousePressEvent = lambda e: self.reset_scores()
+        def on_reset():
+            self.reset_scores()
+        def enter(e):
+            item.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            e.accept()
+        def leave(e):
+            item.setStyleSheet("background: white; border-radius: 4px;")
+            e.accept()
+        item.mousePressEvent = lambda e: on_reset()
+        item.enterEvent = enter
+        item.leaveEvent = leave
         btn_layout.addWidget(item)
         
         # Kart Adedi dropdown (4.)
