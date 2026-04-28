@@ -8,13 +8,13 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass, field
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal, QEvent
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QInputDialog, QMessageBox, QAction,
     QHBoxLayout, QVBoxLayout, QGridLayout, QToolButton, QTabWidget, QLabel, QComboBox,
-    QPushButton, QTableWidget, QTableWidgetItem, QMenu, QLineEdit, QFrame, QLayout
+    QPushButton, QTableWidget, QTableWidgetItem, QMenu, QLineEdit, QFrame, QLayout,
+    QSizePolicy
 )
-from PyQt5.QtCore import Qt, QRect, QTimer, pyqtSignal, QEvent
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGradient
 import base64
 
