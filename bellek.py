@@ -19,6 +19,16 @@ from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap, QPen, QIcon, QLinearGr
 import base64
 
 
+def load_icon(path):
+    """Load icon from file."""
+    p = Path(__file__).resolve().parent / path
+    if p.exists():
+        pix = QPixmap(str(p))
+        if not pix.isNull():
+            return pix.scaled(20, 20, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    return None
+
+
 def load_app_icon():
     """Load app icon from embedded base64."""
     # Read from self (bellek.png) in same directory as this file
@@ -656,16 +666,21 @@ class MainWindow(QMainWindow):
         btn_layout.setStretch(2, 1)
         btn_layout.setStretch(3, 1)
         
-        # Yeni Oyun (▶)
+        # Yeni Oyun (icon)
         btn1 = QWidget()
         btn1.setObjectName("toolbar_btn")
         btn1.setFixedHeight(50)
         v = QVBoxLayout(btn1)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
-        lbl = QLabel("▶")
+        icon = load_icon("1.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("▶")
+            lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
-        lbl.setStyleSheet("font-size: 20px;")
         lbl.setFixedHeight(22)
         txt = QLabel("Yeni Oyun")
         txt.setAlignment(Qt.AlignCenter)
@@ -689,16 +704,21 @@ class MainWindow(QMainWindow):
         btn1.setAttribute(Qt.WA_Hover)
         btn_layout.addWidget(btn1)
         
-        # Yeniden (↻)
+        # Yeniden (icon)
         item2 = QWidget()
         item2.setObjectName("toolbar_btn")
         item2.setFixedHeight(50)
         v = QVBoxLayout(item2)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
-        lbl = QLabel("↻")
+        icon = load_icon("2.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("↻")
+            lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
-        lbl.setStyleSheet("font-size: 20px;")
         lbl.setFixedHeight(22)
         txt = QLabel("Yeniden")
         txt.setAlignment(Qt.AlignCenter)
@@ -722,16 +742,21 @@ class MainWindow(QMainWindow):
         item2.setAttribute(Qt.WA_Hover)
         btn_layout.addWidget(item2)
         
-        # Skorları Sıfırla (✕)
+        # Skorları Sıfırla (icon)
         item3 = QWidget()
         item3.setObjectName("toolbar_btn")
         item3.setFixedHeight(50)
         v = QVBoxLayout(item3)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
-        lbl = QLabel("✕")
+        icon = load_icon("3.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("✕")
+            lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
-        lbl.setStyleSheet("font-size: 20px;")
         lbl.setFixedHeight(22)
         txt = QLabel("Skorları Sıfırla")
         txt.setAlignment(Qt.AlignCenter)
@@ -756,16 +781,21 @@ class MainWindow(QMainWindow):
         item3.setFixedHeight(50)
         btn_layout.addWidget(item3)
         
-        # Kart Adedi dropdown (4.)
+        # Kart Adedi (icon)
         btn4 = QWidget()
         btn4.setMinimumHeight(50)
         btn4.setMaximumHeight(50)
         v = QVBoxLayout(btn4)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
-        lbl = QLabel("▦")
+        icon = load_icon("4.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("▦")
+            lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
-        lbl.setStyleSheet("font-size: 20px;")
         lbl.setFixedHeight(22)
         self.grid_combo = QComboBox()
         self.grid_combo.setFixedHeight(22)
