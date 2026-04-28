@@ -606,37 +606,60 @@ class MainWindow(QMainWindow):
         """Toolbar - Rounded boxes"""
         ribbon = RibbonBar(self)
         
-        # 1. Butonlar kutusu - ikon ustte, yazi altta, 3 kutu yan yana
-        btn_layout = QHBoxLayout()
+        # 1. Butonlar - tek kutu icinde 3 buton + dropdown
+        btn_container = QWidget()
+        btn_layout = QHBoxLayout(btn_container)
         btn_layout.setSpacing(4)
+        btn_layout.setContentsMargins(0, 0, 0, 0)
         
-        for icon, text, handler in [
-            ("▶", "Yeni Oyun", self.new_game),
-            ("↻", "Yeniden", self.restart_game),
-            ("✕", "Skorları Sıfırla", self.reset_scores)
-        ]:
-            item = QWidget()
-            v = QVBoxLayout(item)
-            v.setSpacing(2)
-            v.setContentsMargins(8, 4, 8, 4)
-            lbl_icon = QLabel(icon)
-            lbl_icon.setAlignment(Qt.AlignCenter)
-            lbl_icon.setStyleSheet("font-size: 24px;")
-            lbl_text = QLabel(text)
-            lbl_text.setAlignment(Qt.AlignCenter)
-            lbl_text.setStyleSheet("font-size: 12px;")
-            v.addWidget(lbl_icon)
-            v.addWidget(lbl_text)
-            item.mousePressEvent = lambda e, h=handler: h()
-            btn_layout.addWidget(item)
-        
-        btn_box = self.create_kutu(btn_layout)
-        
-        # 2. Kart Adedi
+        # Yeni Oyun (ikon + dropdown)
+        first_btn = QWidget()
+        v = QVBoxLayout(first_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(8, 4, 8, 4)
+        lbl_icon = QLabel("▶")
+        lbl_icon.setAlignment(Qt.AlignCenter)
+        lbl_icon.setStyleSheet("font-size: 24px;")
         self.grid_combo = QComboBox()
         self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
         self.grid_combo.setCurrentText(self.grid_size)
         self.grid_combo.currentTextChanged.connect(self.change_grid_size)
+        v.addWidget(lbl_icon)
+        v.addWidget(self.grid_combo)
+        first_btn.mousePressEvent = lambda e: self.new_game()
+        btn_layout.addWidget(first_btn)
+        
+        # Yeniden
+        item = QWidget()
+        v = QVBoxLayout(item)
+        v.setSpacing(2)
+        v.setContentsMargins(8, 4, 8, 4)
+        lbl_icon = QLabel("↻")
+        lbl_icon.setAlignment(Qt.AlignCenter)
+        lbl_icon.setStyleSheet("font-size: 24px;")
+        lbl_text = QLabel("Yeniden")
+        lbl_text.setAlignment(Qt.AlignCenter)
+        lbl_text.setStyleSheet("font-size: 12px;")
+        v.addWidget(lbl_icon)
+        v.addWidget(lbl_text)
+        item.mousePressEvent = lambda e: self.restart_game()
+        btn_layout.addWidget(item)
+        
+        # Skorları Sıfırla
+        item = QWidget()
+        v = QVBoxLayout(item)
+        v.setSpacing(2)
+        v.setContentsMargins(8, 4, 8, 4)
+        lbl_icon = QLabel("✕")
+        lbl_icon.setAlignment(Qt.AlignCenter)
+        lbl_icon.setStyleSheet("font-size: 24px;")
+        lbl_text = QLabel("Skorları Sıfırla")
+        lbl_text.setAlignment(Qt.AlignCenter)
+        lbl_text.setStyleSheet("font-size: 12px;")
+        v.addWidget(lbl_icon)
+        v.addWidget(lbl_text)
+        item.mousePressEvent = lambda e: self.reset_scores()
+        btn_layout.addWidget(item)
         
         # 3. Oyuncu
         player_layout = QHBoxLayout()
@@ -664,14 +687,12 @@ class MainWindow(QMainWindow):
         stats_layout.addWidget(self.lbl_matches)
         stats_layout.addWidget(self.lbl_time)
         
-        # Ana layout - 4 kutu
+        # Ana layout - 3 kutu (butonlar, oyuncu, istatistik)
         layout = QHBoxLayout(ribbon)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
         
-        layout.addWidget(self.create_kutu(btn_layout))
-        
-        layout.addWidget(self.create_kutu(self.grid_combo))
+        layout.addWidget(self.create_kutu(btn_container))
         
         layout.addWidget(self.create_kutu(player_layout))
         
