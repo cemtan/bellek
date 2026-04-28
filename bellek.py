@@ -627,21 +627,6 @@ class MainWindow(QMainWindow):
         item.mousePressEvent = lambda e: self.new_game()
         btn_layout.addWidget(item)
         
-        # Kart Adedi dropdown
-        item = QWidget()
-        v = QVBoxLayout(item)
-        v.setSpacing(0)
-        lbl = QLabel("▦")
-        lbl.setAlignment(Qt.AlignCenter)
-        lbl.setStyleSheet("font-size: 20px;")
-        self.grid_combo = QComboBox()
-        self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
-        self.grid_combo.setCurrentText(self.grid_size)
-        self.grid_combo.currentTextChanged.connect(self.change_grid_size)
-        v.addWidget(lbl)
-        v.addWidget(self.grid_combo)
-        btn_layout.addWidget(item)
-        
         # Yeniden (↻)
         item = QWidget()
         v = QVBoxLayout(item)
@@ -670,6 +655,21 @@ class MainWindow(QMainWindow):
         v.addWidget(lbl)
         v.addWidget(txt)
         item.mousePressEvent = lambda e: self.reset_scores()
+        btn_layout.addWidget(item)
+        
+        # Kart Adedi dropdown (4.)
+        item = QWidget()
+        v = QVBoxLayout(item)
+        v.setSpacing(0)
+        lbl = QLabel("▦")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setStyleSheet("font-size: 20px;")
+        self.grid_combo = QComboBox()
+        self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
+        self.grid_combo.setCurrentText(self.grid_size)
+        self.grid_combo.currentTextChanged.connect(self.change_grid_size)
+        v.addWidget(lbl)
+        v.addWidget(self.grid_combo)
         btn_layout.addWidget(item)
         
         # 3. Oyuncu
