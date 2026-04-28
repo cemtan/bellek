@@ -770,9 +770,13 @@ class MainWindow(QMainWindow):
         self.grid_combo = QComboBox()
         self.grid_combo.setFixedHeight(22)
         self.grid_combo.setStyleSheet("font-size: 12px; background: white;")
+        
+        # Centering trick
+        le = self.grid_combo.lineEdit()
+        le.setAlignment(Qt.AlignCenter)
+        le.setReadOnly(True)
         self.grid_combo.setEditable(True)
-        self.grid_combo.lineEdit().setAlignment(Qt.AlignCenter)
-        self.grid_combo.lineEdit().setReadOnly(True)
+        
         self.grid_combo.addItems(["4x4", "4x6", "5x6", "4x8", "6x8"])
         self.grid_combo.setCurrentText(self.grid_size)
         self.grid_combo.currentTextChanged.connect(self.change_grid_size)
