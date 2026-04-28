@@ -66,25 +66,34 @@ class RibbonBar(QWidget):
                 background: transparent;
                 width: 16px;
             }
-            QComboBox::down-arrow {
+            QComboBox {
+                border: 1px solid #cccccc;
+                background: white;
+                color: black;
+            }
+            QComboBox::drop-down {
                 border: none;
+                background: transparent;
             }
             QComboBox QAbstractItemView {
                 background: white;
                 border: 1px solid #cccccc;
                 color: black;
-                outline: 0px;
             }
-            QComboBox QAbstractItemView::item {
+            QComboBox QListView {
+                background: white;
+                border: 1px solid #cccccc;
+            }
+            QComboBox QListView::item {
                 background: white;
                 color: black;
             }
-            QComboBox QAbstractItemView::item:selected {
-                background: #eaeaea;
+            QComboBox QListView::item:selected {
+                background: #eaeaea !important;
                 color: black;
             }
-            QComboBox QAbstractItemView::item:hover {
-                background: #eaeaea;
+            QComboBox QListView::item:hover {
+                background: #eaeaea !important;
                 color: black;
             }
             QLabel { color: #333333; }
