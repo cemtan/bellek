@@ -825,78 +825,6 @@ class MainWindow(QMainWindow):
         btn4.setAttribute(Qt.WA_Hover)
         btn_layout.addWidget(btn4)
         
-        # Moves button
-        item_moves = QWidget()
-        item_moves.setObjectName("toolbar_btn")
-        item_moves.setFixedHeight(50)
-        v = QVBoxLayout(item_moves)
-        v.setSpacing(2)
-        v.setContentsMargins(4, 2, 4, 2)
-        icon = load_icon("6.svg")
-        if icon and not icon.isNull():
-            lbl = QLabel()
-            lbl.setPixmap(icon)
-        else:
-            lbl = QLabel("👣")
-            lbl.setStyleSheet("font-size: 20px;")
-        lbl.setAlignment(Qt.AlignCenter)
-        lbl.setFixedHeight(22)
-        self.lbl_moves = QLabel("0")
-        self.lbl_moves.setAlignment(Qt.AlignCenter)
-        self.lbl_moves.setFixedHeight(22)
-        self.lbl_moves.setStyleSheet("font-size: 12px;")
-        v.addWidget(lbl)
-        v.addWidget(self.lbl_moves)
-        btn_layout.addWidget(item_moves)
-        
-        # Matches button
-        item_matches = QWidget()
-        item_matches.setObjectName("toolbar_btn")
-        item_matches.setFixedHeight(50)
-        v = QVBoxLayout(item_matches)
-        v.setSpacing(2)
-        v.setContentsMargins(4, 2, 4, 2)
-        icon = load_icon("7.svg")
-        if icon and not icon.isNull():
-            lbl = QLabel()
-            lbl.setPixmap(icon)
-        else:
-            lbl = QLabel("🔗")
-            lbl.setStyleSheet("font-size: 20px;")
-        lbl.setAlignment(Qt.AlignCenter)
-        lbl.setFixedHeight(22)
-        self.lbl_matches = QLabel("0/0")
-        self.lbl_matches.setAlignment(Qt.AlignCenter)
-        self.lbl_matches.setFixedHeight(22)
-        self.lbl_matches.setStyleSheet("font-size: 12px;")
-        v.addWidget(lbl)
-        v.addWidget(self.lbl_matches)
-        btn_layout.addWidget(item_matches)
-        
-        # Time button
-        item_time = QWidget()
-        item_time.setObjectName("toolbar_btn")
-        item_time.setFixedHeight(50)
-        v = QVBoxLayout(item_time)
-        v.setSpacing(2)
-        v.setContentsMargins(4, 2, 4, 2)
-        icon = load_icon("8.svg")
-        if icon and not icon.isNull():
-            lbl = QLabel()
-            lbl.setPixmap(icon)
-        else:
-            lbl = QLabel("⏱")
-            lbl.setStyleSheet("font-size: 20px;")
-        lbl.setAlignment(Qt.AlignCenter)
-        lbl.setFixedHeight(22)
-        self.lbl_time = QLabel("00:00")
-        self.lbl_time.setAlignment(Qt.AlignCenter)
-        self.lbl_time.setFixedHeight(22)
-        self.lbl_time.setStyleSheet("font-size: 12px;")
-        v.addWidget(lbl)
-        v.addWidget(self.lbl_time)
-        btn_layout.addWidget(item_time)
-        
         # 3. Oyuncu (icon + edit)
         player_btn = QWidget()
         player_btn.setObjectName("toolbar_btn")
@@ -1054,6 +982,18 @@ class MainWindow(QMainWindow):
         layout.setSpacing(4)
         
         layout.addWidget(self.create_kutu(btn_container))
+        
+        # Player + stats in box
+        player_stats = QHBoxLayout()
+        player_stats.setSpacing(8)
+        player_stats.addWidget(player_btn)
+        player_stats.addWidget(moves_btn)
+        player_stats.addWidget(matches_btn)
+        player_stats.addWidget(time_btn)
+        
+        content = QWidget()
+        content.setLayout(player_stats)
+        layout.addWidget(self.create_kutu(content))
         
         layout.addStretch()
         
