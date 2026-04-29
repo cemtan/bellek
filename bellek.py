@@ -283,7 +283,7 @@ class GameWidget(QWidget):
         bg_x = self.sidebar_width
         game_rect = QRect(bg_x, 0, self.width() - bg_x, self.height())
         painter.fillRect(game_rect, QColor("#ffffff"))
-        painter.setPen(QPen(QColor("#cccccc"), 1))
+        painter.setPen(QPen(QColor("#dadada"), 1))
         # Skor tabelası ile bilgi bölümü arasında çizgi istemediğin için
         # yalnızca sağ ve alt sınırı çiziyoruz.
         painter.drawLine(game_rect.right(), game_rect.top(), game_rect.right(), game_rect.bottom())
