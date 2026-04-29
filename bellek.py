@@ -429,15 +429,6 @@ class GameWidget(QWidget):
         painter.setPen(QColor(25, 103, 210))
         painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
         painter.drawText(start_x + 100, 45, str(self.moves))
-        
-        # Eşleştirmeler - sayı
-        painter.setPen(QColor(100, 100, 100))
-        painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
-        painter.drawText(start_x + 200, 45, f"Eşleştirmeler:")
-        
-        painter.setPen(QColor(25, 103, 210))
-        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
-        painter.drawText(start_x + 330, 45, f"{self.matched_pairs}/{self.total_pairs}")
 
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
