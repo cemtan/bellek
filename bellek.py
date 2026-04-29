@@ -354,14 +354,14 @@ class GameWidget(QWidget):
         painter.setFont(QFont("Segoe UI", 9, QFont.Normal))
         moves_col_x = 190
         duration_col_x = 240
-        painter.drawText(15, 51, "Sıra")
-        painter.drawText(50, 51, "Oyuncu")
-        painter.drawText(moves_col_x, 51, "Adım")
-        painter.drawText(duration_col_x, 51, "Süre")
+        painter.drawText(15, 56, "Sıra")
+        painter.drawText(50, 56, "Oyuncu")
+        painter.drawText(moves_col_x, 56, "Adım")
+        painter.drawText(duration_col_x, 56, "Süre")
         
         # Skor listesi - grid boyutuna göre
         scores = self.score_manager.get_top_scores(self.grid_size)
-        y_pos = 71
+        y_pos = 76
         
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
         
