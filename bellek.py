@@ -940,9 +940,20 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
         
-        layout.addWidget(self.create_kutu(btn_container))
+        # 1. Kutucuk - Üstünde Oyun yazısı
+        games_box_container = QWidget()
+        games_box_v = QVBoxLayout(games_box_container)
+        games_box_v.setSpacing(2)
+        games_box_v.setContentsMargins(0, 0, 0, 0)
+        games_label = QLabel("Oyun")
+        games_label.setAlignment(Qt.AlignCenter)
+        games_label.setFixedHeight(16)
+        games_label.setStyleSheet("font-size: 10px; color: #666666;")
+        games_box_v.addWidget(games_label)
+        games_box_v.addWidget(self.create_kutu(btn_container))
+        layout.addWidget(games_box_container)
         
-        # Player + stats in box
+        # Player + stats in box - Üstünde Oyuncu yazısı
         player_stats = QHBoxLayout()
         player_stats.setSpacing(8)
         player_stats.addWidget(player_btn)
@@ -950,9 +961,20 @@ class MainWindow(QMainWindow):
         player_stats.addWidget(matches_btn)
         player_stats.addWidget(time_btn)
         
+        player_box_container = QWidget()
+        player_box_v = QVBoxLayout(player_box_container)
+        player_box_v.setSpacing(2)
+        player_box_v.setContentsMargins(0, 0, 0, 0)
+        player_label = QLabel("Oyuncu")
+        player_label.setAlignment(Qt.AlignCenter)
+        player_label.setFixedHeight(16)
+        player_label.setStyleSheet("font-size: 10px; color: #666666;")
+        player_box_v.addWidget(player_label)
+        
         content = QWidget()
         content.setLayout(player_stats)
-        layout.addWidget(self.create_kutu(content))
+        player_box_v.addWidget(self.create_kutu(content))
+        layout.addWidget(player_box_container)
         
         layout.addStretch()
         
