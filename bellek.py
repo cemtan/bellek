@@ -322,7 +322,7 @@ class GameWidget(QWidget):
                 painter.fillRect(card.rect, QColor("#d9d9d9"))
             
             # Kart kenarı 1px
-            painter.setPen(QPen(QColor("#f3f3f3"), 1))
+            painter.setPen(QPen(QColor("#dadada"), 1))
             painter.drawRoundedRect(card.rect, 6, 6)
             
             # İcon
