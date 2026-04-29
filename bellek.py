@@ -818,15 +818,28 @@ class MainWindow(QMainWindow):
         btn4.setAttribute(Qt.WA_Hover)
         btn_layout.addWidget(btn4)
         
-        # 3. Oyuncu (sadece edit)
-        player_layout = QHBoxLayout()
-        player_layout.setSpacing(4)
+        # 3. Oyuncu (icon + edit)
+        player_btn = QWidget()
+        player_btn.setFixedHeight(50)
+        v = QVBoxLayout(player_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(4, 2, 4, 2)
+        icon = load_icon("5.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("👤")
+            lbl.setStyleSheet("font-size: 20px;")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setFixedHeight(22)
         name_edit = QLineEdit()
         name_edit.setText(self.player_name)
-        name_edit.setFixedWidth(120)
-        name_edit.setStyleSheet("padding: 2px 4px;")
+        name_edit.setFixedHeight(16)
+        name_edit.setStyleSheet("padding: 0 2px; font-size: 10px;")
         name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
-        player_layout.addWidget(name_edit)
+        v.addWidget(lbl)
+        v.addWidget(name_edit)
         
         # 4. Stats
         stats_layout = QHBoxLayout()
@@ -847,7 +860,7 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.create_kutu(btn_container))
         
-        layout.addWidget(self.create_kutu(player_layout))
+        layout.addWidget(self.create_kutu(player_btn))
         
         layout.addWidget(self.create_kutu(stats_layout))
         
