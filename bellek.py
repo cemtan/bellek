@@ -217,7 +217,7 @@ class GameWidget(QWidget):
         
         self.reset_btn_rect = QRect()
         self.reset_btn_hover = False
-        self.sidebar_width = 320
+        self.sidebar_width = 340
         self.sidebar_min_width = 250
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 20
