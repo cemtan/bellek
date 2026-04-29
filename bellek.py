@@ -820,8 +820,8 @@ class MainWindow(QMainWindow):
         
         # 3. Oyuncu (icon + edit)
         player_btn = QWidget()
-        player_btn.setMinimumHeight(50)
-        player_btn.setMaximumHeight(50)
+        player_btn.setObjectName("toolbar_btn")
+        player_btn.setFixedHeight(50)
         v = QVBoxLayout(player_btn)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
@@ -836,11 +836,24 @@ class MainWindow(QMainWindow):
         lbl.setFixedHeight(22)
         name_edit = QLineEdit()
         name_edit.setText(self.player_name)
-        name_edit.setFixedHeight(16)
-        name_edit.setStyleSheet("padding: 0 2px; font-size: 10px;")
+        name_edit.setFixedHeight(22)
+        name_edit.setStyleSheet("padding: 0 2px; font-size: 12px; background: white;")
         name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
         v.addWidget(lbl)
         v.addWidget(name_edit)
+        
+        # hover effect
+        def enter_player(e):
+            player_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            player_btn.update()
+            e.accept()
+        def leave_player(e):
+            player_btn.setStyleSheet("background: white; border-radius: 4px;")
+            player_btn.update()
+            e.accept()
+        player_btn.enterEvent = enter_player
+        player_btn.leaveEvent = leave_player
+        player_btn.setAttribute(Qt.WA_Hover)
         
         # 4. Stats - moved inline
         self.lbl_moves = QLabel("Adımlar: 0")
