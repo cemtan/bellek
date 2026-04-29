@@ -446,9 +446,6 @@ class GameWidget(QWidget):
         painter.setPen(QColor(25, 103, 210))
         painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
         painter.drawText(start_x + 485, 45, self.format_time())
-        
-        # Reset Butonu - Modern Office Style
-        self.draw_reset_button(painter)
 
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
