@@ -339,6 +339,12 @@ class GameWidget(QWidget):
         # Arka plan - skor tabelası
         painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
         
+        # Skor listesi kutusu (1. kutucuk gibi)
+        leaderboard_box = QRect(4, 48, width - 8, self.height() - 52)
+        painter.fillRect(leaderboard_box, QColor("#ffffff"))
+        painter.setPen(QPen(QColor("#cccccc"), 1))
+        painter.drawRoundedRect(leaderboard_box, 8, 8)
+        
         # Sağ sınır: bilgi bölümünde görünmesin diye 70px sonrası çizilir
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawLine(width - 1, 70, width - 1, self.height())
