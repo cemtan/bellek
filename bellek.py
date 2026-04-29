@@ -333,7 +333,7 @@ class GameWidget(QWidget):
         painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
         
         # Skor listesi kutusu (1. kutucuk gibi)
-        leaderboard_box = QRect(4, 10, width - 8, self.height() - 14)
+        leaderboard_box = QRect(4, 20, width - 8, self.height() - 14)
         painter.fillRect(leaderboard_box, QColor("#ffffff"))
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawRoundedRect(leaderboard_box, 8, 8)
@@ -342,11 +342,27 @@ class GameWidget(QWidget):
         # Başlık - kutunun içinde
         painter.setPen(QColor(25, 103, 210))
         painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
-        painter.drawText(15, 30, f"🏆 Sıralama ({self.grid_size})")
+        painter.drawText(15, 40, f"🏆 Sıralama ({self.grid_size})")
         
         # Alt çizgi
         painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(15, 38, width - 15, 38)
+        painter.drawLine(15, 48, width - 15, 48)
+        painter.setPen(QColor(0, 0, 0))
+        
+        leaderboard_box = QRect(4, 30, width - 8, self.height() - 14)
+        painter.fillRect(leaderboard_box, QColor("#ffffff"))
+        painter.setPen(QPen(QColor("#cccccc"), 1))
+        painter.drawRoundedRect(leaderboard_box, 8, 8)
+        painter.setPen(QColor(0, 0, 0))
+        
+        # Başlık - kutunun içinde
+        painter.setPen(QColor(25, 103, 210))
+        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.drawText(15, 50, f"🏆 Sıralama ({self.grid_size})")
+        
+        # Alt çizgi
+        painter.setPen(QPen(QColor("#cccccc"), 1))
+        painter.drawLine(15, 58, width - 15, 58)
         painter.setPen(QColor(0, 0, 0))
         
         # Başlık satırı
@@ -354,14 +370,14 @@ class GameWidget(QWidget):
         painter.setFont(QFont("Segoe UI", 9, QFont.Normal))
         moves_col_x = 190
         duration_col_x = 240
-        painter.drawText(15, 56, "Sıra")
-        painter.drawText(50, 56, "Oyuncu")
-        painter.drawText(moves_col_x, 56, "Adım")
-        painter.drawText(duration_col_x, 56, "Süre")
+        painter.drawText(15, 66, "Sıra")
+        painter.drawText(50, 66, "Oyuncu")
+        painter.drawText(moves_col_x, 66, "Adım")
+        painter.drawText(duration_col_x, 66, "Süre")
         
         # Skor listesi - grid boyutuna göre
         scores = self.score_manager.get_top_scores(self.grid_size)
-        y_pos = 76
+        y_pos = 86
         
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
         
