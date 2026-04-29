@@ -21,11 +21,14 @@ import base64
 
 def load_icon(path):
     """Load icon from file."""
-    p = Path(__file__).resolve().parent / path
-    if p.exists():
-        pix = QPixmap(str(p))
-        if not pix.isNull():
-            return pix.scaled(20, 20, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    # icons folder and current directory
+    base = Path(__file__).resolve().parent
+    for folder in [base / "icons", base]:
+        p = folder / path
+        if p.exists():
+            pix = QPixmap(str(p))
+            if not pix.isNull():
+                return pix.scaled(20, 20, Qt.KeepAspectRatio, Qt.SmoothTransformation)
     return None
 
 
