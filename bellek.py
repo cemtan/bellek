@@ -500,6 +500,13 @@ class GameWidget(QWidget):
             self.reset_btn_hover = hover
             self.setCursor(Qt.PointingHandCursor if hover else Qt.ArrowCursor)
             self.update()
+
+        # Update stats after match
+        central = self.parent()
+        if central:
+            main = central.parent()
+            if main and hasattr(main, 'update_stats'):
+                main.update_stats()
         elif not hover:
             self.setCursor(Qt.ArrowCursor)
 
