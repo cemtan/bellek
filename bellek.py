@@ -226,6 +226,7 @@ class GameWidget(QWidget):
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
+        self.setMaximumSize(1400, 900)
     
     def parse_grid(self, grid_size):
         sizes = {'4x4': (4, 4), '4x6': (4, 6), '5x6': (5, 6), '4x8': (4, 8), '6x8': (6, 8)}
@@ -803,6 +804,7 @@ class MainWindow(QMainWindow):
         name_edit = QLineEdit()
         name_edit.setText(self.player_name)
         name_edit.setFixedHeight(22)
+        name_edit.setFixedWidth(50)
         name_edit.setStyleSheet("padding: 0 2px; font-size: 12px; background: white;")
         name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
         v.addWidget(lbl)
