@@ -246,6 +246,11 @@ class GameWidget(QWidget):
 
     def tick_time(self):
         self.elapsed_seconds += 1
+        
+        # Update main window stats
+        mw = self.parent()
+        if mw and hasattr(mw, 'update_stats'):
+            mw.update_stats()
         self.update()
 
     def format_time(self):
@@ -997,11 +1002,11 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'game_widget'):
             gw = self.game_widget
             if hasattr(self, 'lbl_moves'):
-                self.lbl_moves.setText(f"{gw.moves}")
+                self.lbl_moves.setText(str(gw.moves))
             if hasattr(self, 'lbl_matches'):
                 self.lbl_matches.setText(f"{gw.matched_pairs}/{gw.total_pairs}")
             if hasattr(self, 'lbl_time'):
-                self.lbl_time.setText(f"{gw.format_time()}")
+                self.lbl_time.setText(gw.format_time())
     
     def create_kutu(self, widget):
         """Kenarı yuvarlatılmış kutu"""
