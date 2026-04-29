@@ -983,6 +983,18 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.create_kutu(btn_container))
         
+        # Player + stats in box
+        player_stats = QHBoxLayout()
+        player_stats.setSpacing(8)
+        player_stats.addWidget(player_btn)
+        player_stats.addWidget(moves_btn)
+        player_stats.addWidget(matches_btn)
+        player_stats.addWidget(time_btn)
+        
+        content = QWidget()
+        content.setLayout(player_stats)
+        layout.addWidget(self.create_kutu(content))
+        
         layout.addStretch()
         
         return ribbon
