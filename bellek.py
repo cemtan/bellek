@@ -819,7 +819,7 @@ class MainWindow(QMainWindow):
             lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setFixedHeight(22)
-        name_edit = QLineEdit()
+        self.name_edit = QLineEdit()
         name_edit.setText(self.player_name)
         name_edit.setFixedHeight(22)
         name_edit.setStyleSheet("padding: 0 2px; font-size: 12px; background: white;")
