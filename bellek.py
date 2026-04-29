@@ -1096,6 +1096,9 @@ class MainWindow(QMainWindow):
         # İsim etiketini güncelle
         if hasattr(self, 'name_label'):
             self.name_label.setText(self.player_name)
+        # İsim edit guncelle
+        if hasattr(self, 'name_edit'):
+            self.name_edit.setText(self.player_name)
         self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
     
     def reset_scores(self):
