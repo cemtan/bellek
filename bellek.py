@@ -525,6 +525,13 @@ class GameWidget(QWidget):
             first_card.is_matched = True
             second_card.is_matched = True
             self.matched_pairs += 1
+
+            # Update stats after match
+            central = self.parent()
+            if central:
+                main = central.parent()
+                if main and hasattr(main, 'update_stats'):
+                    main.update_stats()
             
             
             if self.matched_pairs == self.total_pairs:
