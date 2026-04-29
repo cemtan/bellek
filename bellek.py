@@ -283,6 +283,7 @@ class GameWidget(QWidget):
         self.draw_modern_sidebar(painter, bg_x)
         
         # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
+        bg_x = self.sidebar_width
         cols = self.cols
         rows = self.rows
         outer_padding = 14
