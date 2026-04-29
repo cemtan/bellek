@@ -43,6 +43,84 @@ def load_app_icon():
     return QIcon()
 
 
+def input_dialog(parent, title, label, default_text=""):
+    """Custom input dialog with app icon"""
+    from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout
+    from PyQt5.QtCore import Qt
+    
+    dialog = QDialog(parent)
+    dialog.setWindowTitle(title)
+    dialog.setWindowIcon(get_icon())
+    dialog.setFixedSize(350, 150)
+    layout = QVBoxLayout(dialog)
+    
+    # Icon and label
+    icon_label = QLabel()
+    icon_label.setPixmap(get_icon().pixmap(48, 48))
+    icon_label.setAlignment(Qt.AlignCenter)
+    layout.addWidget(icon_label)
+    
+    label_w = QLabel(label)
+    label_w.setAlignment(Qt.AlignCenter)
+    layout.addWidget(label_w)
+    
+    # Input
+    edit = QLineEdit(default_text)
+    layout.addWidget(edit)
+    
+    # Buttons
+    btn_layout = QHBoxLayout()
+    ok_btn = QPushButton("Tamam")
+    cancel_btn = QPushButton("İptal")
+    btn_layout.addStretch()
+    btn_layout.addWidget(ok_btn)
+    btn_layout.addWidget(cancel_btn)
+    layout.addLayout(btn_layout)
+    
+    def accept():
+        dialog.done(1)
+    def reject():
+        dialog.done(0)
+    
+    ok_btn.clicked.connect(accept)
+    cancel_btn.clicked.connect(reject)
+    edit.returnPressed.connect(accept)
+    
+    if dialog.exec_() == 1:
+        return edit.text(), True
+    return "", False
+
+def get_icon():
+    """Get app icon for dialogs"""
+    from pathlib import Path
+    from PyQt5.QtGui import QPixmap, QIcon
+    from PIL import Image
+    import io, base64
+    
+    # Try to load from file first (for development)
+    bellek_py = Path(__file__).resolve()
+    png_path = bellek_py.parent / "bellek.png"
+    if png_path.exists():
+        pixmap = QPixmap(str(png_path))
+        return QIcon(pixmap)
+    
+    # Try extraction from PyInstaller bundle
+    try:
+        import sys, os
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+            png_path = os.path.join(base_path, 'bellek.png')
+            if os.path.exists(png_path):
+                pixmap = QPixmap(png_path)
+                return QIcon(pixmap)
+    except:
+        pass
+    
+    return QIcon()
+
+
+
+
 # ============== RIBBON SINIFI ==============
 class RibbonBar(QWidget):
     """Toolbar widget"""
@@ -1088,7 +1166,7 @@ class MainWindow(QMainWindow):
     
     def new_game(self):
         """Yeni oyun"""
-        name, ok = QInputDialog.getText(self, "🆕 Yeni Oyun", "Oyuncu adı:", text=self.player_name)
+        name, ok = input_dialog(self, "🆕 Yeni Oyun", "Oyuncu adı:", self.player_name)
         if ok and name.strip():
             self.player_name = name.strip()
             self.restart_game()
@@ -1157,7 +1235,7 @@ Platform: Linux KDE uyumlu"""
     def change_name(self, new_name=None):
         """İsim değiştir"""
         if new_name is None:
-            name, ok = QInputDialog.getText(self, "👤 Oyuncu", "Yeni isminiz:", text=self.player_name)
+            name, ok = input_dialog(self, "👤 Oyuncu", "Yeni isminiz:", self.player_name)
             if ok and name.strip():
                 new_name = name.strip()
         
@@ -1172,7 +1250,7 @@ Platform: Linux KDE uyumlu"""
     
     def get_player_name(self):
         """Oyuncu adını sor"""
-        name, ok = QInputDialog.getText(None, "🎮 Hoş Geldiniz", "Adınızı girin:", text="Oyuncu")
+        name, ok = input_dialog(None, "🎮 Hoş Geldiniz", "Adınızı girin:", "Oyuncu")
         if ok and name.strip():
             return name.strip()
         return None
