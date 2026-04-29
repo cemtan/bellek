@@ -597,6 +597,7 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
         self.score_manager = ScoreManager()
+        self.sidebar_collapsed = False
         
         # Info panel + Oyun widget
         self.info_panel = self.create_info_panel()
