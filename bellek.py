@@ -226,7 +226,6 @@ class GameWidget(QWidget):
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
-        self.setMaximumSize(1400, 900)
     
     def parse_grid(self, grid_size):
         sizes = {'4x4': (4, 4), '4x6': (4, 6), '5x6': (5, 6), '4x8': (4, 8), '6x8': (6, 8)}
@@ -789,7 +788,6 @@ class MainWindow(QMainWindow):
         player_btn = QWidget()
         player_btn.setObjectName("toolbar_btn")
         player_btn.setFixedHeight(50)
-        player_btn.setMaximumWidth(100)
         v = QVBoxLayout(player_btn)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
@@ -802,11 +800,9 @@ class MainWindow(QMainWindow):
             lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setFixedHeight(22)
-        lbl.setMaximumWidth(100)
         name_edit = QLineEdit()
         name_edit.setText(self.player_name)
         name_edit.setFixedHeight(22)
-        name_edit.setFixedWidth(100)
         name_edit.setStyleSheet("padding: 0 2px; font-size: 12px; background: white;")
         name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
         v.addWidget(lbl)
