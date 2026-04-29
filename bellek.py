@@ -247,7 +247,8 @@ class GameWidget(QWidget):
     def tick_time(self):
         self.elapsed_seconds += 1
         
-        self.toolbar.update_stats()
+        if self.parent() and hasattr(self.parent(), 'update_stats'):
+            self.parent().update_stats()
         self.update()
 
     def format_time(self):
