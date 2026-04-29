@@ -280,6 +280,7 @@ class GameWidget(QWidget):
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         
         # SOL PANEL - Modern Office Style
+        bg_x = self.sidebar_width
         self.draw_modern_sidebar(painter, bg_x)
         
         # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
