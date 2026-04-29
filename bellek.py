@@ -222,7 +222,7 @@ class GameWidget(QWidget):
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 8
         self.sidebar_resizing = False
-        self.top_panel_height = 10
+        self.top_panel_height = 9
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
@@ -287,7 +287,7 @@ class GameWidget(QWidget):
         bg_x = self.sidebar_width
         cols = self.cols
         rows = self.rows
-        outer_padding = 10
+        outer_padding = 9
         card_gap = 6
         cards_area_x = bg_x + outer_padding
         cards_area_y = self.top_panel_height + outer_padding
@@ -333,7 +333,7 @@ class GameWidget(QWidget):
         painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
         
         # Skor listesi kutusu (1. kutucuk gibi)
-        leaderboard_box = QRect(4, 15, width - 8, self.height() - 19)
+        leaderboard_box = QRect(4, 10, width - 8, self.height() - 14)
         painter.fillRect(leaderboard_box, QColor("#ffffff"))
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawRoundedRect(leaderboard_box, 8, 8)
@@ -342,11 +342,11 @@ class GameWidget(QWidget):
         # Başlık - kutunun içinde
         painter.setPen(QColor(25, 103, 210))
         painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
-        painter.drawText(15, 33, f"🏆 Sıralama ({self.grid_size})")
+        painter.drawText(15, 28, f"🏆 Sıralama ({self.grid_size})")
         
         # Alt çizgi
         painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(15, 41, width - 15, 41)
+        painter.drawLine(15, 36, width - 15, 36)
         painter.setPen(QColor(0, 0, 0))
         
         # Başlık satırı
