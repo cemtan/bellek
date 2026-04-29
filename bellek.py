@@ -188,6 +188,16 @@ class GameWidget(QWidget):
         self.player_name = player_name
         self.score_manager = score_manager
         self.grid_size = grid_size
+
+
+class RoundedBox(QFrame):
+    """Yuvarlak kenarli kutu (1. Kutucuk stili)"""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("rounded_box")
+        style = "QFrame#rounded_box { background: white; border: 1px solid #cccccc; border-radius: 8px; }"
+        self.setStyleSheet(style)
+
         
         self.rows, self.cols = self.parse_grid(grid_size)
         self.total_pairs = (self.rows * self.cols) // 2
@@ -1036,8 +1046,7 @@ class MainWindow(QMainWindow):
     
     def create_kutu(self, widget):
         """Kenarı yuvarlatılmış kutu"""
-        box = QFrame()
-        box.setObjectName("box")
+        box = RoundedBox()
         if widget:
             v_layout = QVBoxLayout(box)
             v_layout.setContentsMargins(4, 0, 4, 2)
@@ -1120,6 +1129,16 @@ Platform: Linux KDE uyumlu"""
     def change_grid_size(self, grid_size):
         """Grid boyutunu değiştir"""
         self.grid_size = grid_size
+
+
+class RoundedBox(QFrame):
+    """Yuvarlak kenarli kutu (1. Kutucuk stili)"""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("rounded_box")
+        style = "QFrame#rounded_box { background: white; border: 1px solid #cccccc; border-radius: 8px; }"
+        self.setStyleSheet(style)
+
         self.restart_game()
     
     def change_name(self, new_name=None):
