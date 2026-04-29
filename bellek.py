@@ -995,6 +995,17 @@ class MainWindow(QMainWindow):
         
         return ribbon
     
+    def update_stats(self):
+        """İstatistikleri güncelle"""
+        if hasattr(self, 'game_widget'):
+            gw = self.game_widget
+            if hasattr(self, 'lbl_moves'):
+                self.lbl_moves.setText(f"{gw.moves}")
+            if hasattr(self, 'lbl_matches'):
+                self.lbl_matches.setText(f"{gw.matched_pairs}/{gw.total_pairs}")
+            if hasattr(self, 'lbl_time'):
+                self.lbl_time.setText(f"{gw.format_time()}")
+    
     def create_kutu(self, widget):
         """Kenarı yuvarlatılmış kutu"""
         box = QFrame()
