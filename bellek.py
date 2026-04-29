@@ -220,7 +220,7 @@ class GameWidget(QWidget):
         self.sidebar_width = 320
         self.sidebar_min_width = 250
         self.sidebar_max_width = 560
-        self.sidebar_resize_margin = 8
+        self.sidebar_resize_margin = 15
         self.sidebar_resizing = False
         self.top_panel_height = 9
         
