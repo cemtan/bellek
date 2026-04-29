@@ -279,11 +279,6 @@ class GameWidget(QWidget):
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         
-        # Arka plan (sağ taraf) - beyaz oyun alanı
-        bg_x = self.sidebar_width
-        game_rect = QRect(bg_x, 0, self.width() - bg_x, self.height())
-        painter.fillRect(game_rect, QColor("#ffffff"))
-        
         # SOL PANEL - Modern Office Style
         self.draw_modern_sidebar(painter, bg_x)
         
@@ -296,12 +291,6 @@ class GameWidget(QWidget):
         cards_area_y = self.top_panel_height + outer_padding
         cards_area_w = (self.width() - bg_x) - (outer_padding * 2)
         cards_area_h = (self.height() - self.top_panel_height) - (outer_padding * 2)
-        
-        # Kart alanı kutusu (kutucuk gibi)
-        cards_box = QRect(cards_area_x, cards_area_y - 4, cards_area_w, cards_area_h + 4)
-        painter.fillRect(cards_box, QColor("#ffffff"))
-        painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawRoundedRect(cards_box, 8, 8)
         
         card_w = max(10, (cards_area_w - (card_gap * (cols - 1))) // cols)
         card_h = max(10, (cards_area_h - (card_gap * (rows - 1))) // rows)
