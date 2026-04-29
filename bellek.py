@@ -340,7 +340,7 @@ class GameWidget(QWidget):
         painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
         
         # Skor listesi kutusu (1. kutucuk gibi)
-        leaderboard_box = QRect(4, 48, width - 8, self.height() - 52)
+        leaderboard_box = QRect(4, 64, width - 8, self.height() - 68)
         painter.fillRect(leaderboard_box, QColor("#ffffff"))
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawRoundedRect(leaderboard_box, 8, 8)
@@ -349,28 +349,28 @@ class GameWidget(QWidget):
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawLine(width - 1, 70, width - 1, self.height())
         
-        # Başlık
+        # Başlık - kutunun içinde
         painter.setPen(QColor(25, 103, 210))
-        painter.setFont(QFont("Segoe UI", 16, QFont.Bold))
-        painter.drawText(15, 35, f"🏆 Sıralama ({self.grid_size})")
+        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        painter.drawText(15, 82, f"🏆 Sıralama ({self.grid_size})")
         
         # Alt çizgi
         painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(15, 45, width - 15, 45)
+        painter.drawLine(15, 90, width - 15, 90)
         
         # Başlık satırı
         painter.setPen(QColor(100, 100, 100))
         painter.setFont(QFont("Segoe UI", 9, QFont.Normal))
         moves_col_x = 190
         duration_col_x = 240
-        painter.drawText(15, 65, "Sıra")
-        painter.drawText(50, 65, "Oyuncu")
-        painter.drawText(moves_col_x, 65, "Adım")
-        painter.drawText(duration_col_x, 65, "Süre")
+        painter.drawText(15, 105, "Sıra")
+        painter.drawText(50, 105, "Oyuncu")
+        painter.drawText(moves_col_x, 105, "Adım")
+        painter.drawText(duration_col_x, 105, "Süre")
         
         # Skor listesi - grid boyutuna göre
         scores = self.score_manager.get_top_scores(self.grid_size)
-        y_pos = 85
+        y_pos = 125
         
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
         
