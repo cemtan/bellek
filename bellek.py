@@ -222,6 +222,7 @@ class GameWidget(QWidget):
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 20
         self.sidebar_resizing = False
+        self.sidebar_collapsed = False
         self.top_panel_height = 9
         
         self.initialize_cards()
@@ -279,9 +280,10 @@ class GameWidget(QWidget):
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         
-        # SOL PANEL - Modern Office Style
-        bg_x = self.sidebar_width
-        self.draw_modern_sidebar(painter, bg_x)
+        # SOL PANEL - Modern Office Style (collapsed değilse)
+        if not self.sidebar_collapsed:
+            bg_x = self.sidebar_width
+            self.draw_modern_sidebar(painter, bg_x)
         
         # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
         bg_x = self.sidebar_width
@@ -400,14 +402,19 @@ class GameWidget(QWidget):
         return max(self.sidebar_min_width, min(desired_width, max_width))
 
     def is_on_sidebar_edge(self, pos):
+        if self.sidebar_collapsed:
+            return False
         return abs(pos.x() - self.sidebar_width) <= self.sidebar_resize_margin
 
-    def draw_top_panel(self, painter, start_x):
+    def draw_top_panel(self, painter, bg_x):
         """Modern Office-style üst panel"""
         panel_height = self.top_panel_height
         
-        # Arka plan - bilgi bölümü
-        painter.fillRect(start_x, 0, self.width() - start_x, panel_height, QColor("#f3f3f3"))
+        # Arka plan (collapsed ise tam genişlik)
+        if self.sidebar_collapsed:
+            painter.fillRect(0, 0, self.width(), panel_height, QColor("#f3f3f3"))
+        else:
+            painter.fillRect(bg_x, 0, self.width() - bg_x, panel_height, QColor("#f3f3f3"))
         
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
@@ -935,7 +942,52 @@ class MainWindow(QMainWindow):
         time_btn.leaveEvent = leave_time
         time_btn.setAttribute(Qt.WA_Hover)
         
-        # Ana layout - tek kutu (butonlar + oyuncu + istatistik)
+        # Toggle sidebar - 3. kutucuk
+        toggle_btn = QWidget()
+        toggle_btn.setObjectName("toolbar_btn")
+        toggle_btn.setFixedHeight(50)
+        toggle_btn.setFixedWidth(50)
+        v = QVBoxLayout(toggle_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(4, 2, 4, 2)
+        icon = load_icon("9.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("◀")
+            lbl.setStyleSheet("font-size: 20px;")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setFixedHeight(22)
+        txt = QLabel("Sırala")
+        txt.setAlignment(Qt.AlignCenter)
+        txt.setFixedHeight(16)
+        txt.setStyleSheet("font-size: 10px;")
+        v.addWidget(lbl)
+        v.addWidget(txt)
+        
+        def toggle_sidebar():
+            self.sidebar_collapsed = not self.sidebar_collapsed
+            if self.sidebar_collapsed:
+                self.sidebar_width = 0
+            else:
+                self.sidebar_width = 340
+            self.update()
+        
+        def enter_toggle(e):
+            toggle_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            toggle_btn.update()
+            e.accept()
+        def leave_toggle(e):
+            toggle_btn.setStyleSheet("background: white; border-radius: 4px;")
+            toggle_btn.update()
+            e.accept()
+        toggle_btn.mousePressEvent = lambda e: toggle_sidebar()
+        toggle_btn.enterEvent = enter_toggle
+        toggle_btn.leaveEvent = leave_toggle
+        toggle_btn.setAttribute(Qt.WA_Hover)
+        
+        # Ana layout - 3 kutu
         layout = QHBoxLayout(ribbon)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -953,6 +1005,9 @@ class MainWindow(QMainWindow):
         content = QWidget()
         content.setLayout(player_stats)
         layout.addWidget(self.create_kutu(content))
+        
+        # 3. Kutucuk - Toggle
+        layout.addWidget(self.create_kutu(toggle_btn))
         
         layout.addStretch()
         
