@@ -222,7 +222,7 @@ class GameWidget(QWidget):
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 8
         self.sidebar_resizing = False
-        self.top_panel_height = 15
+        self.top_panel_height = 10
         
         self.initialize_cards()
         self.setMinimumSize(1400, 900)
@@ -287,7 +287,7 @@ class GameWidget(QWidget):
         bg_x = self.sidebar_width
         cols = self.cols
         rows = self.rows
-        outer_padding = 15
+        outer_padding = 10
         card_gap = 6
         cards_area_x = bg_x + outer_padding
         cards_area_y = self.top_panel_height + outer_padding
