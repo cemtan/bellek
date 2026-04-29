@@ -306,17 +306,17 @@ class GameWidget(QWidget):
             
             card.rect = QRect(x, y, card_w, card_h)
             
-            # Kart tasarımı
+            # Kart tasarımı - 1. Kutucuk stili ile aynı
             if card.is_matched:
                 painter.fillRect(card.rect, QColor(76, 175, 80))
             elif card.is_flipped:
                 painter.fillRect(card.rect, QColor(25, 118, 210))
             else:
-                painter.fillRect(card.rect, QColor("#d9d9d9"))
+                painter.fillRect(card.rect, QColor("#ffffff"))
             
-            # Kart kenarı 1px
-            painter.setPen(QPen(QColor("#dadada"), 1))
-            painter.drawRoundedRect(card.rect, 6, 6)
+            # Kart kenarı - 1. Kutucuk gibi #cccccc, 8px yuvarlak
+            painter.setPen(QPen(QColor("#cccccc"), 1))
+            painter.drawRoundedRect(card.rect, 8, 8)
             
             # İcon
             if card.is_flipped or card.is_matched:
