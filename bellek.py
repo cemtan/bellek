@@ -841,17 +841,10 @@ class MainWindow(QMainWindow):
         v.addWidget(lbl)
         v.addWidget(name_edit)
         
-        # 4. Stats
-        stats_layout = QHBoxLayout()
-        stats_layout.setSpacing(8)
-        
+        # 4. Stats - moved inline
         self.lbl_moves = QLabel("Adımlar: 0")
         self.lbl_matches = QLabel("Eşleştirmeler: 0")
         self.lbl_time = QLabel("Süre: 00:00")
-        
-        stats_layout.addWidget(self.lbl_moves)
-        stats_layout.addWidget(self.lbl_matches)
-        stats_layout.addWidget(self.lbl_time)
         
         # Ana layout - tek kutu (butonlar + oyuncu + istatistik)
         layout = QHBoxLayout(ribbon)
@@ -860,19 +853,17 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.create_kutu(btn_container))
         
-        # Player + stats directly (no box for player)
+        # Player + stats in box
         player_stats = QHBoxLayout()
         player_stats.setSpacing(8)
         player_stats.addWidget(player_btn)
-        
-        lbl_container = QWidget()
-        lbl_container.setLayout(stats_layout)
-        stats_layout.setSpacing(8)
-        player_stats.addWidget(lbl_container)
+        player_stats.addWidget(self.lbl_moves)
+        player_stats.addWidget(self.lbl_matches)
+        player_stats.addWidget(self.lbl_time)
         
         content = QWidget()
         content.setLayout(player_stats)
-        layout.addWidget(content)
+        layout.addWidget(self.create_kutu(content))
         
         layout.addStretch()
         
