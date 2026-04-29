@@ -333,7 +333,7 @@ class GameWidget(QWidget):
         painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
         
         # Skor listesi kutusu (1. kutucuk gibi)
-        leaderboard_box = QRect(4, 17, width - 8, self.height() - 24)
+        leaderboard_box = QRect(4, 17, width - 8, self.height() - 29)
         painter.fillRect(leaderboard_box, QColor("#ffffff"))
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawRoundedRect(leaderboard_box, 8, 8)
