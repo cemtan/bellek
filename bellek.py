@@ -993,7 +993,53 @@ class MainWindow(QMainWindow):
         time_btn.leaveEvent = leave_time
         time_btn.setAttribute(Qt.WA_Hover)
         
-        # Ana layout - tek kutu (butonlar + oyuncu + istatistik)
+        # Toggle button - 3. kutucuk (sidebar aç/kapa)
+        toggle_btn = QWidget()
+        toggle_btn.setObjectName("toolbar_btn")
+        toggle_btn.setFixedHeight(50)
+        toggle_btn.setFixedWidth(50)
+        v = QVBoxLayout(toggle_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(4, 2, 4, 2)
+        icon = load_icon("9.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("◀")
+            lbl.setStyleSheet("font-size: 20px;")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setFixedHeight(22)
+        txt = QLabel("Sırala")
+        txt.setAlignment(Qt.AlignCenter)
+        txt.setFixedHeight(16)
+        txt.setStyleSheet("font-size: 10px;")
+        v.addWidget(lbl)
+        v.addWidget(txt)
+        
+        # toggle click
+        def on_toggle():
+            self.sidebar_collapsed = not self.sidebar_collapsed
+            if self.sidebar_collapsed:
+                self.sidebar_width = 0
+            else:
+                self.sidebar_width = 340
+            self.update()
+        
+        def enter_toggle(e):
+            toggle_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            toggle_btn.update()
+            e.accept()
+        def leave_toggle(e):
+            toggle_btn.setStyleSheet("background: white; border-radius: 4px;")
+            toggle_btn.update()
+            e.accept()
+        toggle_btn.enterEvent = enter_toggle
+        toggle_btn.leaveEvent = leave_toggle
+        toggle_btn.setAttribute(Qt.WA_Hover)
+        toggle_btn.mousePressEvent = lambda e: on_toggle()
+        
+        # Ana layout - 3 kutu yan yana
         layout = QHBoxLayout(ribbon)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -1011,6 +1057,9 @@ class MainWindow(QMainWindow):
         content = QWidget()
         content.setLayout(player_stats)
         layout.addWidget(self.create_kutu(content))
+        
+        # 3. Kutucuk - Toggle
+        layout.addWidget(self.create_kutu(toggle_btn))
         
         layout.addStretch()
         
