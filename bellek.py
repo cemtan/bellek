@@ -247,8 +247,8 @@ class GameWidget(QWidget):
     def tick_time(self):
         self.elapsed_seconds += 1
         
-        if self.parent() and hasattr(self.parent(), 'update_stats'):
-            self.parent().update_stats()
+        if hasattr(self, 'toolbar') and self.toolbar:
+            self.toolbar.update_stats()
         self.update()
 
     def format_time(self):
@@ -631,6 +631,7 @@ class MainWindow(QMainWindow):
         # Info panel + Oyun widget
         self.info_panel = self.create_info_panel()
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
+        self.game_widget.toolbar = self.info_panel
         
         # Layout
         main_layout = QVBoxLayout()
@@ -1032,6 +1033,7 @@ class MainWindow(QMainWindow):
         """Oyunu yeniden başlat"""
         # Yeni oyun widget
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
+        self.game_widget.toolbar = self.info_panel
         
         # Layout güncelle
         main = self.centralWidget().layout()
