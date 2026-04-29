@@ -424,11 +424,10 @@ class GameWidget(QWidget):
         # Adımlar - sayı
         painter.setPen(QColor(100, 100, 100))
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
-        painter.drawText(start_x + 15, 45, f"Adımlar:")
         
         painter.setPen(QColor(25, 103, 210))
         painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
-        painter.drawText(start_x + 100, 45, str(self.moves))
+        painter.drawText(start_x + 15, 45, str(self.moves))
 
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
