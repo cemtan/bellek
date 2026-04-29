@@ -932,7 +932,42 @@ class MainWindow(QMainWindow):
         matches_btn.leaveEvent = leave_matches
         matches_btn.setAttribute(Qt.WA_Hover)
         
-        self.lbl_time = QLabel("Süre: 00:00")
+        # Time as button
+        time_btn = QWidget()
+        time_btn.setObjectName("toolbar_btn")
+        time_btn.setFixedHeight(50)
+        time_btn.setFixedWidth(70)
+        v = QVBoxLayout(time_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(4, 2, 4, 2)
+        icon = load_icon("8.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("⏱")
+            lbl.setStyleSheet("font-size: 20px;")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setFixedHeight(22)
+        self.lbl_time = QLabel("00:00")
+        self.lbl_time.setAlignment(Qt.AlignCenter)
+        self.lbl_time.setFixedHeight(22)
+        self.lbl_time.setStyleSheet("font-size: 12px;")
+        v.addWidget(lbl)
+        v.addWidget(self.lbl_time)
+        
+        # hover effect
+        def enter_time(e):
+            time_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            time_btn.update()
+            e.accept()
+        def leave_time(e):
+            time_btn.setStyleSheet("background: white; border-radius: 4px;")
+            time_btn.update()
+            e.accept()
+        time_btn.enterEvent = enter_time
+        time_btn.leaveEvent = leave_time
+        time_btn.setAttribute(Qt.WA_Hover)
         
         # Ana layout - tek kutu (butonlar + oyuncu + istatistik)
         layout = QHBoxLayout(ribbon)
@@ -947,7 +982,7 @@ class MainWindow(QMainWindow):
         player_stats.addWidget(player_btn)
         player_stats.addWidget(moves_btn)
         player_stats.addWidget(matches_btn)
-        player_stats.addWidget(self.lbl_time)
+        player_stats.addWidget(time_btn)
         
         content = QWidget()
         content.setLayout(player_stats)
@@ -982,7 +1017,7 @@ class MainWindow(QMainWindow):
             if hasattr(self, 'lbl_matches'):
                 self.lbl_matches.setText(f"{gw.matched_pairs}/{gw.total_pairs}")
             if hasattr(self, 'lbl_time'):
-                self.lbl_time.setText(f"Süre: {gw.format_time()}")
+                self.lbl_time.setText(f"{gw.format_time()}")
     
     def new_game(self):
         """Yeni oyun"""
