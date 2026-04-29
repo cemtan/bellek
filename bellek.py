@@ -860,14 +860,17 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.create_kutu(btn_container))
         
-        # Player + stats combined
-        player_stats = QWidget()
-        psh = QHBoxLayout(player_stats)
-        psh.setSpacing(8)
-        psh.addWidget(self.create_kutu(player_btn))
-        psh.addWidget(self.create_kutu(stats_layout))
+        # Player + stats directly (no box)
+        player_stats = QHBoxLayout()
+        player_stats.setSpacing(8)
+        player_stats.addWidget(player_btn)
+        player_stats.addWidget(self.lbl_moves)
+        player_stats.addWidget(self.lbl_matches)
+        player_stats.addWidget(self.lbl_time)
         
-        layout.addWidget(self.create_kutu(player_stats))
+        content = QWidget()
+        content.setLayout(player_stats)
+        layout.addWidget(content)
         
         layout.addStretch()
         
