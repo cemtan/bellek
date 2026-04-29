@@ -416,19 +416,6 @@ class GameWidget(QWidget):
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawLine(start_x, panel_height - 1, self.width(), panel_height - 1)
         
-        # Oyuncu adı - başlık
-        painter.setPen(QColor(25, 103, 210))
-        painter.setFont(QFont("Segoe UI", 11, QFont.Bold))
-        painter.drawText(start_x + 15, 20, f"👤 {self.player_name}")
-        
-        # Adımlar - sayı
-        painter.setPen(QColor(100, 100, 100))
-        painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
-        
-        painter.setPen(QColor(25, 103, 210))
-        painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
-        painter.drawText(start_x + 15, 45, str(self.moves))
-
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
         self.reset_btn_rect = QRect(self.width() - 180, 12, 160, 46)
