@@ -860,10 +860,10 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.create_kutu(btn_container))
         
-        # Player + stats directly
+        # Player + stats directly (no box for player)
         player_stats = QHBoxLayout()
         player_stats.setSpacing(8)
-        player_stats.addWidget(self.create_kutu(player_btn))
+        player_stats.addWidget(player_btn)
         
         lbl_container = QWidget()
         lbl_container.setLayout(stats_layout)
