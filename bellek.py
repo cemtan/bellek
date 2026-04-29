@@ -820,10 +820,10 @@ class MainWindow(QMainWindow):
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setFixedHeight(22)
         self.name_edit = QLineEdit()
-        name_edit.setText(self.player_name)
+        self.name_edit.setText(self.player_name)
         name_edit.setFixedHeight(22)
         name_edit.setStyleSheet("padding: 0 2px; font-size: 12px; background: white;")
-        name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
+        self.name_edit.returnPressed.connect(lambda: self.change_name(self.name_edit.text()))
         v.addWidget(lbl)
         v.addWidget(name_edit)
         
@@ -1098,7 +1098,7 @@ class MainWindow(QMainWindow):
             self.name_label.setText(self.player_name)
         # İsim edit guncelle
         if hasattr(self, 'name_edit'):
-            self.name_edit.setText(self.player_name)
+            self.self.name_edit.setText(self.player_name)
         self.setWindowTitle(f"Bellek Oyunu - {self.player_name} - {self.grid_size}")
     
     def reset_scores(self):
