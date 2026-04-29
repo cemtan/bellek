@@ -217,11 +217,14 @@ class GameWidget(QWidget):
         
         self.reset_btn_rect = QRect()
         self.reset_btn_hover = False
+        self.sidebar_collapse_rect = QRect()
         self.sidebar_width = 340
         self.sidebar_min_width = 250
         self.sidebar_max_width = 560
         self.sidebar_resize_margin = 20
         self.sidebar_resizing = False
+        self.sidebar_collapsed = False
+        self.sidebar_collapse_icon = None
         self.top_panel_height = 9
         
         self.initialize_cards()
@@ -279,9 +282,16 @@ class GameWidget(QWidget):
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         
-        # SOL PANEL - Modern Office Style
-        bg_x = self.sidebar_width
-        self.draw_modern_sidebar(painter, bg_x)
+        # SOL PANEL - Modern Office Style (sadece açık ise)
+        if not self.sidebar_collapsed:
+            bg_x = self.sidebar_width
+            self.draw_modern_sidebar(painter, bg_x)
+        else:
+            # Kapalı - sadece collapse butonu çiz
+            bg_x = 0
+        
+        # Collapse butonu (her zaman çiz)
+        self.draw_collapse_button(painter)
         
         # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
         bg_x = self.sidebar_width
@@ -400,14 +410,21 @@ class GameWidget(QWidget):
         return max(self.sidebar_min_width, min(desired_width, max_width))
 
     def is_on_sidebar_edge(self, pos):
+        # Kapalıysa kenar kontrolü yapma
+        if self.sidebar_collapsed:
+            return False
         return abs(pos.x() - self.sidebar_width) <= self.sidebar_resize_margin
 
-    def draw_top_panel(self, painter, start_x):
+    def draw_top_panel(self, painter, bg_x):
         """Modern Office-style üst panel"""
         panel_height = self.top_panel_height
         
-        # Arka plan - bilgi bölümü
-        painter.fillRect(start_x, 0, self.width() - start_x, panel_height, QColor("#f3f3f3"))
+        # Arka plan - bilgi bölümü (sadece açık ise)
+        if self.sidebar_collapsed:
+            # Tam genişlik
+            painter.fillRect(0, 0, self.width(), panel_height, QColor("#f3f3f3"))
+        else:
+            painter.fillRect(bg_x, 0, self.width() - bg_x, panel_height, QColor("#f3f3f3"))
         
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
@@ -431,7 +448,42 @@ class GameWidget(QWidget):
         painter.setFont(QFont("Segoe UI", 11, QFont.Bold))
         painter.drawText(self.reset_btn_rect, Qt.AlignCenter, "↻  Yeniden Başlat")
 
+    def draw_collapse_button(self, painter):
+        """Sidebar açılır/kapanır buton"""
+        # Yükle
+        if self.sidebar_collapse_icon is None:
+            self.sidebar_collapse_icon = load_icon("9.svg")
+        
+        btn_size = 28
+        if self.sidebar_collapsed:
+            # Kapalı - sağda ikon
+            self.sidebar_collapse_rect = QRect(self.width() - btn_size - 4, 4, btn_size, btn_size)
+            icon_x = self.width() - btn_size - 4
+            icon_y = 4
+        else:
+            # Açık - solda ikon (kenarda)
+            self.sidebar_collapse_rect = QRect(4, 4, btn_size, btn_size)
+            icon_x = 4
+            icon_y = 4
+        
+        # Arka plan
+        painter.fillRect(self.sidebar_collapse_rect, QColor("#f3f3f3"))
+        painter.setPen(QPen(QColor("#cccccc"), 1))
+        painter.drawRoundedRect(self.sidebar_collapse_rect, 4, 4)
+        
+        # İkon
+        if self.sidebar_collapse_icon and not self.sidebar_collapse_icon.isNull():
+            scaled = self.sidebar_collapse_icon.scaled(btn_size - 8, btn_size - 8, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            painter.drawPixmap(icon_x + 4, icon_y + 4, scaled)
+
     def mousePressEvent(self, event):
+        if self.sidebar_collapsed:
+            if self.sidebar_collapse_rect.contains(event.pos()):
+                self.sidebar_collapsed = False
+                self.sidebar_width = 340
+                self.update()
+            return
+        
         if event.button() == Qt.LeftButton and self.is_on_sidebar_edge(event.pos()):
             self.sidebar_resizing = True
             self.setCursor(Qt.SizeHorCursor)
@@ -439,6 +491,12 @@ class GameWidget(QWidget):
 
         if self.reset_btn_rect.contains(event.pos()):
             self.reset_game()
+            return
+        
+        if self.sidebar_collapse_rect.contains(event.pos()):
+            self.sidebar_collapsed = True
+            self.sidebar_width = 0
+            self.update()
             return
         
         if not self.game_active or (self.first_flipped != -1 and self.second_flipped != -1):
