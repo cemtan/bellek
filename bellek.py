@@ -855,8 +855,44 @@ class MainWindow(QMainWindow):
         player_btn.leaveEvent = leave_player
         player_btn.setAttribute(Qt.WA_Hover)
         
-        # 4. Stats - moved inline
-        self.lbl_moves = QLabel("Adımlar: 0")
+        # 4. Stats - moves as button
+        moves_btn = QWidget()
+        moves_btn.setObjectName("toolbar_btn")
+        moves_btn.setFixedHeight(50)
+        moves_btn.setFixedWidth(70)
+        v = QVBoxLayout(moves_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(4, 2, 4, 2)
+        icon = load_icon("6.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("👣")
+            lbl.setStyleSheet("font-size: 20px;")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setFixedHeight(22)
+        self.lbl_moves = QLabel("0")
+        self.lbl_moves.setAlignment(Qt.AlignCenter)
+        self.lbl_moves.setFixedHeight(22)
+        self.lbl_moves.setStyleSheet("font-size: 12px;")
+        v.addWidget(lbl)
+        v.addWidget(self.lbl_moves)
+        
+        # hover effect
+        def enter_moves(e):
+            moves_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            moves_btn.update()
+            e.accept()
+        def leave_moves(e):
+            moves_btn.setStyleSheet("background: white; border-radius: 4px;")
+            moves_btn.update()
+            e.accept()
+        moves_btn.enterEvent = enter_moves
+        moves_btn.leaveEvent = leave_moves
+        moves_btn.setAttribute(Qt.WA_Hover)
+        
+        # Other stats
         self.lbl_matches = QLabel("Eşleştirmeler: 0")
         self.lbl_time = QLabel("Süre: 00:00")
         
@@ -871,7 +907,7 @@ class MainWindow(QMainWindow):
         player_stats = QHBoxLayout()
         player_stats.setSpacing(8)
         player_stats.addWidget(player_btn)
-        player_stats.addWidget(self.lbl_moves)
+        player_stats.addWidget(moves_btn)
         player_stats.addWidget(self.lbl_matches)
         player_stats.addWidget(self.lbl_time)
         
@@ -904,7 +940,7 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'game_widget'):
             gw = self.game_widget
             if hasattr(self, 'lbl_moves'):
-                self.lbl_moves.setText(f"Adımlar: {gw.moves}")
+                self.lbl_moves.setText(f"{gw.moves}")
             if hasattr(self, 'lbl_matches'):
                 self.lbl_matches.setText(f"Eşleştirmeler: {gw.matched_pairs}/{gw.total_pairs}")
             if hasattr(self, 'lbl_time'):
