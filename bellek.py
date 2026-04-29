@@ -327,14 +327,18 @@ class GameWidget(QWidget):
         # Üst Panel - Modern Office Style
         self.draw_top_panel(painter, bg_x)
 
-    def draw_modern_sidebar(self, painter, width):
-        """Modern Office-style sidebar"""
-        # Arka plan - skor tabelası
-        painter.fillRect(0, 0, width, self.height(), QColor("#f3f3f3"))
-        
-        # Skor listesi kutusu (1. kutucuk gibi)
+def draw_modern_sidebar(self, painter, width):
+        """Modern Office-style sidebar (yuvarlak koseler)"""
+        # Arka plan - skor tabelasi (yuvarlak koseler)
+        if width > 0:
+            bg_rect = QRect(0, 0, width, self.height())
+            painter.setBrush(QColor("#f3f3f3"))
+            painter.setPen(Qt.NoPen)
+            painter.drawRoundedRect(bg_rect, 8, 8)
+
+        # Skor listesi kutusu (1. kutucuk gibi yuvarlak koseler)
         leaderboard_box = QRect(4, 17, width - 8, self.height() - 29)
-        painter.fillRect(leaderboard_box, QColor("#ffffff"))
+        painter.setBrush(QColor("#ffffff"))
         painter.setPen(QPen(QColor("#cccccc"), 1))
         painter.drawRoundedRect(leaderboard_box, 8, 8)
         painter.setPen(QColor(0, 0, 0))
