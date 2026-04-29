@@ -960,7 +960,7 @@ class MainWindow(QMainWindow):
             lbl.setStyleSheet("font-size: 20px;")
         lbl.setAlignment(Qt.AlignCenter)
         lbl.setFixedHeight(22)
-        txt = QLabel("Sırala")
+        txt = QLabel("Sıralama")
         txt.setAlignment(Qt.AlignCenter)
         txt.setFixedHeight(16)
         txt.setStyleSheet("font-size: 10px;")
