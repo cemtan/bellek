@@ -287,7 +287,7 @@ class GameWidget(QWidget):
         bg_x = self.sidebar_width
         cols = self.cols
         rows = self.rows
-        outer_padding = 14
+        outer_padding = 15
         card_gap = 6
         cards_area_x = bg_x + outer_padding
         cards_area_y = self.top_panel_height + outer_padding
