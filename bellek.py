@@ -556,7 +556,7 @@ Tebrikler {self.player_name}!
 📊 {self.grid_size} Sıralamaya Kaydedildi!
 """
         
-        parent = self.parent()
+        parent = self.window()
         if parent:
             parent.show_completion(result_text)
 
