@@ -820,7 +820,8 @@ class MainWindow(QMainWindow):
         
         # 3. Oyuncu (icon + edit)
         player_btn = QWidget()
-        player_btn.setFixedHeight(50)
+        player_btn.setMinimumHeight(50)
+        player_btn.setMaximumHeight(50)
         v = QVBoxLayout(player_btn)
         v.setSpacing(2)
         v.setContentsMargins(4, 2, 4, 2)
