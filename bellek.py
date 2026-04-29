@@ -853,14 +853,19 @@ class MainWindow(QMainWindow):
         stats_layout.addWidget(self.lbl_matches)
         stats_layout.addWidget(self.lbl_time)
         
-        # Ana layout - 3 kutu (butonlar, oyuncu, istatistik)
+        # Ana layout - 2 kutu (butonlar+oyuncu, istatistik)
         layout = QHBoxLayout(ribbon)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
         
-        layout.addWidget(self.create_kutu(btn_container))
+        # Combined: buttons + player
+        combined = QWidget()
+        ch = QHBoxLayout(combined)
+        ch.setSpacing(4)
+        ch.addWidget(self.create_kutu(btn_container))
+        ch.addWidget(self.create_kutu(player_btn))
         
-        layout.addWidget(self.create_kutu(player_btn))
+        layout.addWidget(self.create_kutu(combined))
         
         layout.addWidget(self.create_kutu(stats_layout))
         
