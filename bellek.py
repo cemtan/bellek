@@ -971,8 +971,10 @@ class MainWindow(QMainWindow):
             self.sidebar_collapsed = not self.sidebar_collapsed
             if self.sidebar_collapsed:
                 self.sidebar_width = 0
+                toggle_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
             else:
                 self.sidebar_width = 340
+                toggle_btn.setStyleSheet("background: white; border-radius: 4px;")
             self.update()
             if hasattr(self, 'game_widget'):
                 self.game_widget.sidebar_collapsed = self.sidebar_collapsed
@@ -984,7 +986,8 @@ class MainWindow(QMainWindow):
             toggle_btn.update()
             e.accept()
         def leave_toggle(e):
-            toggle_btn.setStyleSheet("background: white; border-radius: 4px;")
+            if not self.sidebar_collapsed:
+                toggle_btn.setStyleSheet("background: white; border-radius: 4px;")
             toggle_btn.update()
             e.accept()
         toggle_btn.mousePressEvent = lambda e: toggle_sidebar()
