@@ -283,11 +283,6 @@ class GameWidget(QWidget):
         bg_x = self.sidebar_width
         game_rect = QRect(bg_x, 0, self.width() - bg_x, self.height())
         painter.fillRect(game_rect, QColor("#ffffff"))
-        painter.setPen(QPen(QColor("#dadada"), 1))
-        # Skor tabelası ile bilgi bölümü arasında çizgi istemediğin için
-        # yalnızca sağ ve alt sınırı çiziyoruz.
-        painter.drawLine(game_rect.right(), game_rect.top(), game_rect.right(), game_rect.bottom())
-        painter.drawLine(game_rect.left(), game_rect.bottom(), game_rect.right(), game_rect.bottom())
         
         # SOL PANEL - Modern Office Style
         self.draw_modern_sidebar(painter, bg_x)
