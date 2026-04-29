@@ -50,9 +50,16 @@ class RibbonBar(QWidget):
         self.setStyleSheet("""
             QWidget { background-color: white; }
             QFrame#box {
-                background: #eaeaea;
+                background: white;
                 border: 1px solid #cccccc;
                 border-radius: 8px;
+            }
+            QFrame#box_underline {
+                background: white;
+                border: none;
+                border-bottom: 2px solid #344adb;
+                border-right: 2px solid #344adb;
+                border-radius: 0px 0px 8px 0px;
             }
             QPushButton {
                 border: none;
@@ -863,10 +870,12 @@ class MainWindow(QMainWindow):
         # Player + stats directly (no box)
         player_stats = QHBoxLayout()
         player_stats.setSpacing(8)
-        player_stats.addWidget(player_btn)
-        player_stats.addWidget(self.lbl_moves)
-        player_stats.addWidget(self.lbl_matches)
-        player_stats.addWidget(self.lbl_time)
+        player_stats.addWidget(self.create_kutu_underline(player_btn))
+        
+        lbl_container = QWidget()
+        lbl_container.setLayout(stats_layout)
+        stats_layout.setSpacing(8)
+        player_stats.addWidget(lbl_container)
         
         content = QWidget()
         content.setLayout(player_stats)
@@ -880,6 +889,22 @@ class MainWindow(QMainWindow):
         """Kenarı yuvarlatılmış kutu"""
         box = QFrame()
         box.setObjectName("box")
+        if widget:
+            v_layout = QVBoxLayout(box)
+            v_layout.setContentsMargins(4, 0, 4, 2)
+            v_layout.setSpacing(0)
+            if isinstance(widget, QLayout):
+                content = QWidget()
+                content.setLayout(widget)
+                v_layout.addWidget(content)
+            else:
+                v_layout.addWidget(widget)
+        return box
+    
+    def create_kutu_underline(self, widget):
+        """Alt ve sağ kenarları dadada renkli kutu"""
+        box = QFrame()
+        box.setObjectName("box_underline")
         if widget:
             v_layout = QVBoxLayout(box)
             v_layout.setContentsMargins(4, 0, 4, 2)
