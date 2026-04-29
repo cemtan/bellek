@@ -409,10 +409,6 @@ class GameWidget(QWidget):
         # Arka plan - bilgi bölümü
         painter.fillRect(start_x, 0, self.width() - start_x, panel_height, QColor("#f3f3f3"))
         
-        # Alt sınır
-        painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(start_x, panel_height - 1, self.width(), panel_height - 1)
-        
     def draw_reset_button(self, painter):
         """Modern Office-style reset butonu"""
         self.reset_btn_rect = QRect(self.width() - 180, 12, 160, 46)
