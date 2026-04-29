@@ -894,6 +894,44 @@ class MainWindow(QMainWindow):
         
         # Other stats
         self.lbl_matches = QLabel("Eşleştirmeler: 0")
+        
+        # Matches as button
+        matches_btn = QWidget()
+        matches_btn.setObjectName("toolbar_btn")
+        matches_btn.setFixedHeight(50)
+        matches_btn.setFixedWidth(70)
+        v = QVBoxLayout(matches_btn)
+        v.setSpacing(2)
+        v.setContentsMargins(4, 2, 4, 2)
+        icon = load_icon("7.svg")
+        if icon and not icon.isNull():
+            lbl = QLabel()
+            lbl.setPixmap(icon)
+        else:
+            lbl = QLabel("✓")
+            lbl.setStyleSheet("font-size: 20px;")
+        lbl.setAlignment(Qt.AlignCenter)
+        lbl.setFixedHeight(22)
+        self.lbl_matches = QLabel("0/0")
+        self.lbl_matches.setAlignment(Qt.AlignCenter)
+        self.lbl_matches.setFixedHeight(22)
+        self.lbl_matches.setStyleSheet("font-size: 12px;")
+        v.addWidget(lbl)
+        v.addWidget(self.lbl_matches)
+        
+        # hover effect
+        def enter_matches(e):
+            matches_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
+            matches_btn.update()
+            e.accept()
+        def leave_matches(e):
+            matches_btn.setStyleSheet("background: white; border-radius: 4px;")
+            matches_btn.update()
+            e.accept()
+        matches_btn.enterEvent = enter_matches
+        matches_btn.leaveEvent = leave_matches
+        matches_btn.setAttribute(Qt.WA_Hover)
+        
         self.lbl_time = QLabel("Süre: 00:00")
         
         # Ana layout - tek kutu (butonlar + oyuncu + istatistik)
@@ -908,7 +946,7 @@ class MainWindow(QMainWindow):
         player_stats.setSpacing(8)
         player_stats.addWidget(player_btn)
         player_stats.addWidget(moves_btn)
-        player_stats.addWidget(self.lbl_matches)
+        player_stats.addWidget(matches_btn)
         player_stats.addWidget(self.lbl_time)
         
         content = QWidget()
@@ -942,7 +980,7 @@ class MainWindow(QMainWindow):
             if hasattr(self, 'lbl_moves'):
                 self.lbl_moves.setText(f"{gw.moves}")
             if hasattr(self, 'lbl_matches'):
-                self.lbl_matches.setText(f"Eşleştirmeler: {gw.matched_pairs}/{gw.total_pairs}")
+                self.lbl_matches.setText(f"{gw.matched_pairs}/{gw.total_pairs}")
             if hasattr(self, 'lbl_time'):
                 self.lbl_time.setText(f"Süre: {gw.format_time()}")
     
