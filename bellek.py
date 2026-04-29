@@ -974,6 +974,10 @@ class MainWindow(QMainWindow):
             else:
                 self.sidebar_width = 340
             self.update()
+            if hasattr(self, 'game_widget'):
+                self.game_widget.sidebar_collapsed = self.sidebar_collapsed
+                self.game_widget.sidebar_width = self.sidebar_width
+                self.game_widget.update()
         
         def enter_toggle(e):
             toggle_btn.setStyleSheet("background: #eaeaea; border-radius: 4px;")
