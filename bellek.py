@@ -335,21 +335,11 @@ class GameWidget(QWidget):
         # Skor listesi kutusu (1. kutucuk gibi)
         leaderboard_box = QRect(4, 15, width - 8, self.height() - 19)
         painter.fillRect(leaderboard_box, QColor("#ffffff"))
-        painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawRoundedRect(leaderboard_box, 8, 8)
-        
-        # Sağ sınır: bilgi bölümünde görünmesin diye 70px sonrası çizilir
-        painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(width - 1, 70, width - 1, self.height())
         
         # Başlık - kutunun içinde
         painter.setPen(QColor(25, 103, 210))
         painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
         painter.drawText(15, 33, f"🏆 Sıralama ({self.grid_size})")
-        
-        # Alt çizgi
-        painter.setPen(QPen(QColor("#cccccc"), 1))
-        painter.drawLine(15, 41, width - 15, 41)
         
         # Başlık satırı
         painter.setPen(QColor(100, 100, 100))
