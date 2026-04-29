@@ -818,19 +818,15 @@ class MainWindow(QMainWindow):
         btn4.setAttribute(Qt.WA_Hover)
         btn_layout.addWidget(btn4)
         
-        # 3. Oyuncu
+        # 3. Oyuncu (sadece edit)
         player_layout = QHBoxLayout()
         player_layout.setSpacing(4)
-        self.name_label = QLabel(self.player_name)
         name_edit = QLineEdit()
         name_edit.setText(self.player_name)
-        name_edit.setFixedWidth(100)
+        name_edit.setFixedWidth(120)
+        name_edit.setStyleSheet("padding: 2px 4px;")
         name_edit.returnPressed.connect(lambda: self.change_name(name_edit.text()))
-        change_btn = QPushButton("Ad Değiştir")
-        change_btn.clicked.connect(lambda: self.change_name(name_edit.text()))
-        player_layout.addWidget(self.name_label)
         player_layout.addWidget(name_edit)
-        player_layout.addWidget(change_btn)
         
         # 4. Stats
         stats_layout = QHBoxLayout()
