@@ -420,7 +420,7 @@ class GameWidget(QWidget):
         # Üst Panel - Modern Office Style
         self.draw_top_panel(painter, bg_x)
 
-    def draw_modern_sidebar(self, painter, width):
+    def draw_modern_sidebar(self, painter, width, highlight_name=None):
         """Modern Office-style sidebar (yuvarlak koseler)"""
         # Arka plan - skor tabelasi (yuvarlak koseler)
         if width > 0:
