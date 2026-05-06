@@ -373,7 +373,10 @@ class GameWidget(QWidget):
         # SOL PANEL - Modern Office Style (collapsed değilse)
         if not self.sidebar_collapsed:
             bg_x = self.sidebar_width
-            self.draw_modern_sidebar(painter, bg_x, self.highlight_name)
+            # Get highlight_name from parent MainWindow
+            parent = self.window()
+            hl_name = getattr(parent, 'highlight_name', None) if parent else None
+            self.draw_modern_sidebar(painter, bg_x, hl_name)
         
         # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
         bg_x = self.sidebar_width
