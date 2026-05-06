@@ -663,8 +663,11 @@ Tebrikler {self.player_name}!
 📊 {self.grid_size} Sıralamaya Kaydedildi!
 """
         
+        # Set highlight on table for this player's score
         parent = self.window()
         if parent:
+            parent.highlight_name = self.player_name
+            parent.update()  # Redraw with highlight
             parent.show_completion(result_text)
 
     def reset_game(self):
