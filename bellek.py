@@ -718,6 +718,7 @@ class MainWindow(QMainWindow):
             pass
         self.score_manager = ScoreManager()
         self.sidebar_collapsed = False
+        self.highlight_name = None  # Track last played for highlight
         
         # Info panel + Oyun widget
         self.info_panel = self.create_info_panel()
