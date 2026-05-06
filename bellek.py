@@ -94,7 +94,8 @@ def get_icon():
     """Get app icon for dialogs"""
     from pathlib import Path
     from PyQt5.QtGui import QPixmap, QIcon
-
+    from PIL import Image
+    import io, base64
     
     # Try to load from file first (for development)
     bellek_py = Path(__file__).resolve()
@@ -390,15 +391,6 @@ class GameWidget(QWidget):
         start_x = cards_area_x
         start_y = cards_area_y
         
-
-    def wheelEvent(self, event):
-        delta = event.angleDelta().y()
-        if delta > 0:
-            self.scroll_offset = max(0, self.scroll_offset - 20)
-        else:
-            self.scroll_offset = min(self.max_scroll, self.scroll_offset + 20)
-        self.update()
-
         for i, card in enumerate(self.cards):
             row, col = i // cols, i % cols
             x = start_x + col * (card_w + card_gap)
@@ -499,9 +491,10 @@ class GameWidget(QWidget):
     def wheelEvent(self, event):
         delta = event.angleDelta().y()
         if delta > 0:
-            self.scroll_offset = max(0, self.scroll_offset - 20)
+            self.scroll_offset = max(0, self.scroll_offset - 25)
         else:
-            self.scroll_offset = min(self.max_scroll, self.scroll_offset + 20)
+            self.max_scroll = max(0, (len(self.score_manager.get_top_scores(self.grid_size)) * 25 - 500))
+            self.scroll_offset = min(self.max_scroll, self.scroll_offset + 25)
         self.update()
 
     def clamp_sidebar_width(self, desired_width):
