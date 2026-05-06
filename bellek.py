@@ -94,8 +94,7 @@ def get_icon():
     """Get app icon for dialogs"""
     from pathlib import Path
     from PyQt5.QtGui import QPixmap, QIcon
-    from PIL import Image
-    import io, base64
+
     
     # Try to load from file first (for development)
     bellek_py = Path(__file__).resolve()
@@ -391,6 +390,15 @@ class GameWidget(QWidget):
         start_x = cards_area_x
         start_y = cards_area_y
         
+
+    def wheelEvent(self, event):
+        delta = event.angleDelta().y()
+        if delta > 0:
+            self.scroll_offset = max(0, self.scroll_offset - 20)
+        else:
+            self.scroll_offset = min(self.max_scroll, self.scroll_offset + 20)
+        self.update()
+
         for i, card in enumerate(self.cards):
             row, col = i // cols, i % cols
             x = start_x + col * (card_w + card_gap)
@@ -459,7 +467,7 @@ class GameWidget(QWidget):
         
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
         
-        for rank, entry in enumerate(scores[:10], 1):
+        for rank, entry in enumerate(scores[:25], 1):
             # Arka plan - hover
             if rank % 2 == 0:
                 painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f3f3f3"))
