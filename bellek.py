@@ -373,7 +373,7 @@ class GameWidget(QWidget):
         # SOL PANEL - Modern Office Style (collapsed değilse)
         if not self.sidebar_collapsed:
             bg_x = self.sidebar_width
-            self.draw_modern_sidebar(painter, bg_x)
+            self.draw_modern_sidebar(painter, bg_x, self.highlight_name)
         
         # Kartlar (sağ taraf) - ayraçlara eşit dış boşlukla yerleşim
         bg_x = self.sidebar_width
@@ -460,8 +460,10 @@ class GameWidget(QWidget):
         painter.setFont(QFont("Segoe UI", 10, QFont.Normal))
         
         for rank, entry in enumerate(scores[:25], 1):
-            # Arka plan - hover
-            if rank % 2 == 0:
+            # Arka plan - hover veya highlight
+            if self.highlight_name and entry.get('name') == self.highlight_name:
+                painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#ffd700"))
+            elif rank % 2 == 0:
                 painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f3f3f3"))
             
             # Medal resimleri
