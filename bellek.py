@@ -464,7 +464,7 @@ class GameWidget(QWidget):
         
         for rank, entry in enumerate(scores[:25], 1):
             # Arka plan - hover veya highlight
-            if self.highlight_name and entry.get('name') == self.highlight_name:
+            if highlight_name and entry.get('name') == highlight_name:
                 painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#ffd700"))
             elif rank % 2 == 0:
                 painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f3f3f3"))
