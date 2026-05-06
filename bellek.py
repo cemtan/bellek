@@ -496,6 +496,14 @@ class GameWidget(QWidget):
             
             y_pos += 25
 
+    def wheelEvent(self, event):
+        delta = event.angleDelta().y()
+        if delta > 0:
+            self.scroll_offset = max(0, self.scroll_offset - 20)
+        else:
+            self.scroll_offset = min(self.max_scroll, self.scroll_offset + 20)
+        self.update()
+
     def clamp_sidebar_width(self, desired_width):
         max_width = min(self.sidebar_max_width, self.width() - 360)
         max_width = max(max_width, self.sidebar_min_width)
