@@ -247,7 +247,7 @@ class ScoreManager:
         self.leaderboard[grid_size].append(entry)
         self.leaderboard[grid_size] = sorted(
             self.leaderboard[grid_size], key=lambda x: (x.get('moves', 10**9), x.get('duration', 10**9))
-        )[:10]
+        )[:25]
         
         try:
             with open(self.scores_file, 'w', encoding='utf-8') as f:
