@@ -241,7 +241,8 @@ class ScoreManager:
             'moves': moves,
             'matched': matched_pairs,
             'duration': duration_seconds,
-            'date': datetime.now().strftime('%Y-%m-%d %H:%M')
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M'),
+            'timestamp': datetime.now().timestamp()
         }
         
         self.leaderboard[grid_size].append(entry)
@@ -464,8 +465,9 @@ class GameWidget(QWidget):
         
         for rank, entry in enumerate(scores[:25], 1):
             # Arka plan - hover veya highlight
-            if highlight_name and entry.get('name') == highlight_name:
-                painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#ffd700"))
+            highlight_ts = entry.get('timestamp')
+            if highlight_ts and highlight_name == highlight_ts:
+                painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f8bebe"))
             elif rank % 2 == 0:
                 painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f3f3f3"))
             
@@ -666,7 +668,8 @@ Tebrikler {self.player_name}!
         # Set highlight on table for this player's score
         parent = self.window()
         if parent:
-            parent.highlight_name = self.player_name
+            # Use timestamp to uniquely identify last game
+            parent.highlight_name = datetime.now().timestamp()
             parent.update()  # Redraw with highlight
             parent.show_completion(result_text)
 
