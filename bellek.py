@@ -467,7 +467,7 @@ class GameWidget(QWidget):
             # Arka plan - hover veya highlight
             highlight_ts = entry.get('timestamp')
             if highlight_ts and highlight_name == highlight_ts:
-                painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f8bebe"))
+                painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#4caf50"))
             elif rank % 2 == 0:
                 painter.fillRect(10, y_pos - 12, width - 20, 20, QColor("#f3f3f3"))
             
@@ -1195,6 +1195,10 @@ class MainWindow(QMainWindow):
     
     def restart_game(self):
         """Oyunu yeniden başlat"""
+        # Clear highlight when starting new game
+        self.highlight_name = None
+        self.update()
+        
         # Yeni oyun widget
         self.game_widget = GameWidget(self.player_name, self.score_manager, self.grid_size)
         self.game_widget.toolbar = self.info_panel
