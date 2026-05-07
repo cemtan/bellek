@@ -648,7 +648,7 @@ class GameWidget(QWidget):
         """Skoru kaydet ve sonuç göster"""
         game_timestamp = datetime.now().timestamp()
 
-        self.score_manager.add_score(
+        scores, is_in_top = self.score_manager.add_score(
             self.player_name,
             0,
             self.moves,
@@ -658,7 +658,9 @@ class GameWidget(QWidget):
             game_timestamp
         )
 
-        result_text = f"""
+        # Build message based on whether player made it to top 25
+        if is_in_top:
+            result_text = f"""
 Tebrikler {self.player_name}!
 
 🎯 Toplam Adımlar: {self.moves}
@@ -667,11 +669,22 @@ Tebrikler {self.player_name}!
 
 📊 {self.grid_size} Sıralamaya Kaydedildi!
 """
+        else:
+            result_text = f"""
+Tebrikler {self.player_name}!
+
+🎯 Toplam Adımlar: {self.moves}
+✨ Eşleştirmeler: {self.matched_pairs}/{self.total_pairs}
+⏱ Süre: {self.format_time()}
+
+⚠️ {self.grid_size} Sıralamasına Giremedin!
+"""
 
         parent = self.window()
         if parent:
-            parent.highlight_name = game_timestamp
-            parent.update()
+            if is_in_top:
+                parent.highlight_name = game_timestamp
+                parent.update()
             parent.show_completion(result_text)
 
     def reset_game(self):
