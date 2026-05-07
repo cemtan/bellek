@@ -232,7 +232,7 @@ class ScoreManager:
                 return {grid: [] for grid in self.DEFAULT_GRIDS}
         return {grid: [] for grid in self.DEFAULT_GRIDS}
     
-    def add_score(self, player_name, score, moves, matched_pairs, grid_size, duration_seconds):
+    def add_score(self, player_name, score, moves, matched_pairs, grid_size, duration_seconds, timestamp=None):
         if grid_size not in self.leaderboard:
             self.leaderboard[grid_size] = []
         
@@ -242,7 +242,7 @@ class ScoreManager:
             'matched': matched_pairs,
             'duration': duration_seconds,
             'date': datetime.now().strftime('%Y-%m-%d %H:%M'),
-            'timestamp': datetime.now().timestamp()
+            'timestamp': timestamp if timestamp else datetime.now().timestamp()
         }
         
         self.leaderboard[grid_size].append(entry)
@@ -646,15 +646,18 @@ class GameWidget(QWidget):
 
     def save_and_show_result(self):
         """Skoru kaydet ve sonuç göster"""
+        game_timestamp = datetime.now().timestamp()
+
         self.score_manager.add_score(
             self.player_name,
             0,
             self.moves,
             self.matched_pairs,
             self.grid_size,
-            self.elapsed_seconds
+            self.elapsed_seconds,
+            game_timestamp
         )
-        
+
         result_text = f"""
 Tebrikler {self.player_name}!
 
@@ -664,13 +667,11 @@ Tebrikler {self.player_name}!
 
 📊 {self.grid_size} Sıralamaya Kaydedildi!
 """
-        
-        # Set highlight on table for this player's score
+
         parent = self.window()
         if parent:
-            # Use timestamp to uniquely identify last game
-            parent.highlight_name = datetime.now().timestamp()
-            parent.update()  # Redraw with highlight
+            parent.highlight_name = game_timestamp
+            parent.update()
             parent.show_completion(result_text)
 
     def reset_game(self):
