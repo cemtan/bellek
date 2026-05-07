@@ -246,9 +246,16 @@ class ScoreManager:
         }
         
         self.leaderboard[grid_size].append(entry)
+        
+        # Check if player is in scores before sorting
+        was_saved = any(e.get('name') == player_name and e.get('timestamp') == timestamp for e in self.leaderboard[grid_size])
+        
         self.leaderboard[grid_size] = sorted(
             self.leaderboard[grid_size], key=lambda x: (x.get('moves', 10**9), x.get('duration', 10**9))
         )[:25]
+        
+        # Check if player is in scores after sorting (meaning they made it to top 25)
+        is_in_top = any(e.get('name') == player_name and e.get('timestamp') == timestamp for e in self.leaderboard[grid_size])
         
         try:
             with open(self.scores_file, 'w', encoding='utf-8') as f:
@@ -256,7 +263,7 @@ class ScoreManager:
         except Exception as e:
             print(f"Skor kaydında hata: {e}")
         
-        return self.leaderboard[grid_size]
+        return self.leaderboard[grid_size], is_in_top
     
     def get_top_scores(self, grid_size='6x8'):
         return self.leaderboard.get(grid_size, [])
